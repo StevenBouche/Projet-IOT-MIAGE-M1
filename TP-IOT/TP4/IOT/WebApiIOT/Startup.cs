@@ -1,4 +1,5 @@
 using DataAccess.IOT;
+using DataAccess.IOT.Cache;
 using DataAccess.IOT.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -55,6 +56,10 @@ namespace WebApiIOT
 
              });
 
+            services.Configure<AlertDatabaseSetting>(Configuration.GetSection(nameof(AlertDatabaseSetting)));
+            services.AddSingleton<IAlertDatabaseSetting>(sp => sp.GetRequiredService<IOptions<AlertDatabaseSetting>>().Value);
+            services.AddTransient<IMongoDBContext<Alert>, MongoDBContext<Alert, IAlertDatabaseSetting>>();
+
             services.Configure<EquipmentIOTDatabaseSetting>(Configuration.GetSection(nameof(EquipmentIOTDatabaseSetting)));
             services.AddSingleton<IEquipmentIOTDatabaseSetting>(sp => sp.GetRequiredService<IOptions<EquipmentIOTDatabaseSetting>>().Value);
             services.AddTransient<IMongoDBContext<EquipmentIOT>, MongoDBContext<EquipmentIOT, IEquipmentIOTDatabaseSetting>>();
@@ -65,6 +70,7 @@ namespace WebApiIOT
 
             services.AddTransient<EquipmentIOTManager, EquipmentIOTManager>();
             services.AddTransient<DataIOTManager, DataIOTManager>();
+            services.AddTransient<AlertManager, AlertManager>();
 
         }
 

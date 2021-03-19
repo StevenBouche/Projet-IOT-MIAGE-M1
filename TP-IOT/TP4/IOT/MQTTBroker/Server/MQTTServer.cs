@@ -1,4 +1,5 @@
 ﻿using DataAccess.IOT;
+using DataAccess.IOT.Cache;
 using DataAccess.IOT.Services;
 using Models;
 using MongoDBAccess;
@@ -8,7 +9,6 @@ using MQTTnet.Protocol;
 using MQTTnet.Server;
 using MQTTnet.Server.Status;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +24,11 @@ namespace MQTTBroker.Server
         public long Ligth { get; set; }
     }
 
+    class MessageAlert
+    {
+        public string ClientId { get; set; }
+    }
+
     public class MQTTServer
     {
         //https://www.youtube.com/watch?v=PSerr2fvnyc&ab_channel=Industry40tv
@@ -32,14 +37,21 @@ namespace MQTTBroker.Server
         readonly int Port = 1883;
         readonly string IpAddr = "127.0.0.1";
         static readonly string DATA_TOPIC = "IOT/data";
+        static readonly string ALERT_HANDLE_TOPIC = "IOT/alertHandle";
+        static readonly string ALERT_TOPIC = "IOT/alert";
 
+        static readonly string Username = "clientProjectIOTMIAGE";
+        static readonly string Password = "XAjNyUPfS8FmBQ[s";
+        static readonly int SeuilAlertTemp = 30;
+
+        readonly AlertCache Cache = new AlertCache();
+        
         readonly IMqttServer server;
 
         DataIOTManager DataManager;
         EquipmentIOTManager EquipmentManager;
-
+        AlertManager AlertManager;
         
-
         public MQTTServer(string serverAddr, int port)
         {
 
@@ -69,11 +81,20 @@ namespace MQTTBroker.Server
                 DatabaseName = "IOT"
             };
 
+            IDatabaseSettings settingAlert = new AlertDatabaseSetting
+            {
+                CollectionName = "Alert",
+                ConnectionString = "mongodb://mongoIOT:27017",
+                DatabaseName = "IOT"
+            };
+
             IMongoDBContext<DataIOT> contextData = new MongoDBContext<DataIOT, IDatabaseSettings>(settingData);
             IMongoDBContext<EquipmentIOT> contextEquipment = new MongoDBContext<EquipmentIOT, IDatabaseSettings>(settingEquipment);
+            IMongoDBContext<Alert> contextAlert = new MongoDBContext<Alert, IDatabaseSettings>(settingAlert);
 
             this.DataManager = new DataIOTManager(contextData);
             this.EquipmentManager = new EquipmentIOTManager(contextEquipment);
+            this.AlertManager = new AlertManager(contextAlert);
 
         }
 
@@ -99,7 +120,10 @@ namespace MQTTBroker.Server
                 .WithConnectionValidator(c =>
                 {
                     Console.WriteLine($"{c.ClientId} connection validator for c.Endpoint: {c.Endpoint}");
-                    c.ReasonCode = MqttConnectReasonCode.Success;
+                    if ((Username.Equals(c.Username) && Password.Equals(c.Password)))
+                        c.ReasonCode = MqttConnectReasonCode.Success;
+                    else
+                        c.ReasonCode = MqttConnectReasonCode.BadUserNameOrPassword;
                 });
 
             this.server.StartAsync(options.Build()).Wait();
@@ -117,10 +141,12 @@ namespace MQTTBroker.Server
         private void HandlerMessageReceived(MqttApplicationMessageReceivedEventArgs e)
         {
 
-            if (e.ApplicationMessage.Topic.Equals(DATA_TOPIC))
+            string topic = e.ApplicationMessage.Topic;
+            string id = e.ClientId;
+
+            if (topic.Equals(DATA_TOPIC))
             {
 
-                string id = e.ClientId;
                 long timestamp = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();
 
                 try
@@ -137,12 +163,63 @@ namespace MQTTBroker.Server
 
                     newData = this.DataManager.Create(newData);
 
+                    if (data.Temperature > SeuilAlertTemp)
+                    {
+                        Alert alert = this.Cache.GetFirstAlertNotHandleOfEquipmentById(id);
+
+                        if (alert is null)
+                        {
+                            alert = new Alert
+                            {
+                                EquipmentId = id,
+                                Temperature = data.Temperature,
+                                IsHandle = false,
+                                Timestamp = timestamp
+                            };
+
+                            alert = this.AlertManager.Create(alert);
+
+                            this.Cache.Add(alert);
+
+                           var msgAlert = new MessageAlert
+                            {
+                                ClientId = id
+                            };
+
+                            MqttApplicationMessage message = new MqttApplicationMessage();
+                            message.Topic = ALERT_TOPIC;
+                            message.ContentType = "application/json";
+                            message.Payload = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msgAlert));
+
+                            this.server.PublishAsync(message);
+
+                        }
+
+                    }
+
                 }
                 catch(JsonReaderException ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
           
+            }
+            else if (topic.Equals(ALERT_HANDLE_TOPIC))
+            {
+
+                Alert alert = this.Cache.GetFirstAlertNotHandleOfEquipmentById(id);
+
+                if(alert is not null)
+                {
+
+                    alert.IsHandle = true;
+
+                    alert = this.AlertManager.Update(alert);
+
+                    this.Cache.Remove(alert);
+
+                }
+
             }
 
         }
