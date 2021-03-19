@@ -9,7 +9,7 @@ services:
       - "8080:80"
       - "9000:443"
     volumes:
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./Https:/root/.aspnet/https:ro
   webapplicationiot:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -18,7 +18,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./UserSecrets:/root/.microsoft/usersecrets:ro
+      - ./Https:/root/.aspnet/https:ro
 
 

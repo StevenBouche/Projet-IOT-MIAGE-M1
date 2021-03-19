@@ -17,6 +17,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQTTBroker", "MQTTBroker\MQTTBroker.csproj", "{16E6ABE2-8056-496F-93AD-BBA0508CA624}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Https", "Https", "{ADECDDAF-093C-459A-9B69-107D7BD1A500}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\steve\AppData\Roaming\ASP.NET\Https\WebApplicationIOT.pfx = C:\Users\steve\AppData\Roaming\ASP.NET\Https\WebApplicationIOT.pfx
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserSercets", "UserSercets", "{BD419A6D-759A-4FD3-A579-50C5C082EE70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "f0a02b8d-316e-4783-900d-aca5d439b6aa", "f0a02b8d-316e-4783-900d-aca5d439b6aa", "{567FDDC0-98DC-464A-856D-11412C01FE9B}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\steve\AppData\Roaming\Microsoft\UserSecrets\f0a02b8d-316e-4783-900d-aca5d439b6aa\secrets.json = C:\Users\steve\AppData\Roaming\Microsoft\UserSecrets\f0a02b8d-316e-4783-900d-aca5d439b6aa\secrets.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +66,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{567FDDC0-98DC-464A-856D-11412C01FE9B} = {BD419A6D-759A-4FD3-A579-50C5C082EE70}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C979B3A-80DF-4467-9013-95F83006EEFC}
