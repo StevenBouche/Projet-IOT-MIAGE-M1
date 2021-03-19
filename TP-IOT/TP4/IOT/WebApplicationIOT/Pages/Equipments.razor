@@ -1,0 +1,58 @@
+﻿@page "/equipments"
+
+@using WebApplicationIOT.Data
+@using Models
+@inject WeatherForecastService ForecastService
+@inject DataIOTService DataIOTService
+@inject EquipmentIOTService EquipmentIOTService
+
+<h1>ESP32 Equipments</h1>
+
+
+@if (datas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Equipment Id</th>
+                <th>Adress IP</th>
+                <th>Is Online</th>
+                <th>Last Connection Timestamp</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in datas)
+            {
+                <tr>
+                    <td>@data.EquipmentId</td>
+                    <td>@data.AdressIP</td>
+                    <td>@data.IsOnline</td>
+                    <td>@DateTimeOffset.FromUnixTimeSeconds(data.LastConnectionTimestamp).UtcDateTime.ToString()</td>
+
+                    @{ 
+                        string url = "equipment/" + data.EquipmentId;
+                    }
+
+                    <td><NavLink href="@url">Details</NavLink></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private List<EquipmentIOT> datas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        datas = await EquipmentIOTService.GetAllEquipmentAsync();
+    }
+
+
+}

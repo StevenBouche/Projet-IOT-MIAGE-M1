@@ -1,0 +1,51 @@
+﻿@page "/equipment/{equipmentId}"
+@using Models
+@using WebApplicationIOT.Data
+@inject DataIOTService DataIOTService
+
+<h3>DataEquipment</h3>
+
+@if (datas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Lumière</th>
+                <th>Température</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in datas)
+            {
+                <tr>
+                    <td>@data.Ligth</td>
+                    <td>@data.Temperature</td>
+                    <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Timestamp).UtcDateTime.ToString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+
+    bool smooth = false;
+
+    [Parameter]
+    public string EquipmentId { get; set; }
+    private List<DataIOT> datas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        datas = await DataIOTService.GetAllDataEquipmentAsync(EquipmentId);
+    }
+
+}
