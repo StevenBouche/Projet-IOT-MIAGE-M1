@@ -10,3 +10,4 @@
 void print_network_status_light();
 void print_network_status();
 void connect_wifi(char* ssid, char* password);
+char* getAddrMac();

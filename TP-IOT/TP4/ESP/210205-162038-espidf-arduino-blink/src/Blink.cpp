@@ -92,6 +92,7 @@ char* password = "iobwgn7obkf91";
 AsyncWebServer server(80);
 
 // MQTT
+//char* mqtt_server = "ec2-18-223-15-182.us-east-2.compute.amazonaws.com";
 char* mqtt_server = "172.20.10.3";
 String whoami; 
 PubSubClient clientMQTT(clientWifi);
@@ -197,7 +198,7 @@ void setup() {
 
   init_HTTP_server(&server, element.temp, element.photo);
 
-  char* idMQTT = "ESP32-123456";
+  char* idMQTT = getAddrMac();
 
   init_MQTT(&clientMQTT, mqtt_server, idMQTT, element.temp, element.photo);
 

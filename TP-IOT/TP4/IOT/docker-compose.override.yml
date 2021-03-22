@@ -10,15 +10,6 @@ services:
       - "9000:443"
     volumes:
       - ./Https:/root/.aspnet/https:ro
-  webapplicationiot:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./UserSecrets:/root/.microsoft/usersecrets:ro
-      - ./Https:/root/.aspnet/https:ro
+
 
 

@@ -163,7 +163,7 @@ namespace MQTTBroker.Server
 
                     newData = this.DataManager.Create(newData);
 
-                    if (data.Temperature > SeuilAlertTemp)
+                   /* if (data.Temperature > SeuilAlertTemp)
                     {
                         Alert alert = this.Cache.GetFirstAlertNotHandleOfEquipmentById(id);
 
@@ -195,7 +195,7 @@ namespace MQTTBroker.Server
 
                         }
 
-                    }
+                    }*/
 
                 }
                 catch(JsonReaderException ex)

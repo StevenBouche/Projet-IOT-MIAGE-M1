@@ -21,16 +21,32 @@ namespace DataAccess.IOT.Services
         {
            var test = this.Context.GetQueryable()
                 .Where(data => data.EquipmentID == id)
-                .OrderBy(data => data.Timestamp).ToList();
+                .OrderByDescending(data => data.Timestamp)
+                .ToList();
 
             return test;
         }
 
         public List<DataIOT> Search(SearchDataPeriodView search)
         {
-            return this.Context.GetQueryable()
-                .Where(data => data.EquipmentID.Equals(search.EquipmentID) && data.Timestamp >= search.TimestampAfter)
+            var test = this.Context.GetQueryable()
+                .Where(data => data.EquipmentID.Equals(search.EquipmentID) && data.Timestamp > search.TimestampAfter)
+                .OrderBy(data => data.Timestamp)
                 .ToList();
+
+            return test;
+        }
+
+        public List<DataIOT> SearchLast(SearchDataPeriodView search)
+        {
+            var test = this.Context.GetQueryable()
+                .Where(data => data.EquipmentID.Equals(search.EquipmentID))
+                .OrderByDescending(data => data.Timestamp)
+                .Take(search.NbData)
+                .OrderBy(data => data.Timestamp)
+                .ToList();
+
+            return test;
         }
     }
 }

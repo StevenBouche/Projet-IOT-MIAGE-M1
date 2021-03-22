@@ -1,4 +1,6 @@
 ﻿using Models;
+using Models.ViewModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,32 @@ namespace WebApplicationIOT.Data
             {
                 Method = new HttpMethod("GET"),
                 RequestUri = new Uri("http://webapiiot/DataIOT/equipment/"+id),
+            };
+
+            var response = await Client.SendAsync(httpRequestMessage);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return await response.Content.ReadFromJsonAsync<List<DataIOT>>();
+            }
+
+            return null;
+        }
+
+        public async Task<List<DataIOT>> GetAllDataEquipmentSearchAsync(string id, long timestamp)
+        {
+
+            SearchDataPeriodView search = new()
+            {
+                EquipmentID = id,
+                TimestampAfter = timestamp
+            };
+
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = new HttpMethod("POST"),
+                RequestUri = new Uri("http://webapiiot/DataIOT/search/"),
+                Content = JsonContent.Create(search)
             };
 
             var response = await Client.SendAsync(httpRequestMessage);

@@ -25,6 +25,13 @@ void print_network_status(){
     Serial.print(s);
 }
 
+char* getAddrMac(){
+    String mac = WiFi.macAddress();
+    char idMQTT[mac.length()+1];
+    strcpy(idMQTT, mac.c_str());
+    return idMQTT;
+}
+
 void connect_wifi(char* ssid, char* password){
  
     WiFi.mode(WIFI_STA);

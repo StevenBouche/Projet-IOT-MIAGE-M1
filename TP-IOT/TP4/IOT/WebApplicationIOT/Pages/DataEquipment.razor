@@ -1,7 +1,11 @@
 ﻿@page "/equipment/{equipmentId}"
 @using Models
 @using WebApplicationIOT.Data
+@using System.Timers
+
 @inject DataIOTService DataIOTService
+
+@implements IDisposable
 
 <h3>DataEquipment</h3>
 
@@ -12,40 +16,178 @@
 else
 {
 
+    <Layout>
+        <LayoutHeader>
+            <h1>DataEquipment</h1>
+        </LayoutHeader>
+        <LayoutContent class="overflow-auto">
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Lumière</th>
-                <th>Température</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var data in datas)
+
+            @if (datas == null)
             {
-                <tr>
-                    <td>@data.Ligth</td>
-                    <td>@data.Temperature</td>
-                    <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Timestamp).UtcDateTime.ToString()</td>
-                </tr>
+                <p><em>Loading...</em></p>
             }
-        </tbody>
-    </table>
+            else
+            {
+                <LineChart @ref="lineChart" TItem="long" />
+
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHeaderCell>Lumière</TableHeaderCell>
+                            <TableHeaderCell>Température</TableHeaderCell>
+                            <TableHeaderCell>Timestamp</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @foreach (var data in datas)
+                        {
+                            <TableRow>
+                                <TableRowHeader>@data.Ligth</TableRowHeader>
+                                <TableRowCell>@data.Temperature</TableRowCell>
+                                <TableRowCell>@DateTimeOffset.FromUnixTimeSeconds(@data.Timestamp).UtcDateTime.ToString()</TableRowCell>
+                            </TableRow>
+                        }
+                    </TableBody>
+                </Table>
+            }
+        </LayoutContent>
+        <LayoutFooter>
+
+        </LayoutFooter>
+    </Layout>
+
+
+
 }
 
 
 @code {
 
-    bool smooth = false;
 
     [Parameter]
     public string EquipmentId { get; set; }
     private List<DataIOT> datas;
 
+    int sizeData = 20;
+    LineChart<long> lineChart;
+
+    Timer timer;
+
+    LineChartDataset<long> temps;
+    LineChartDataset<long> lums;
+
+    bool firstInit = true;
+
+
     protected override async Task OnInitializedAsync()
     {
+
+        lineChart = new LineChart<long>();
+
         datas = await DataIOTService.GetAllDataEquipmentAsync(EquipmentId);
+
     }
+
+    protected override async Task OnAfterRenderAsync(bool first)
+    {
+
+        if (firstInit && datas is not null)
+        {
+
+            var t = datas.Take(20);
+            string[] labels = t.Select(element => ConvertTimestampToString(element.Timestamp)).Reverse().ToArray();
+            List<long> data = t.Select(element => element.Ligth).Reverse().ToList();
+            List<long> data2 = t.Select(element => element.Temperature).Reverse().ToList();
+
+            temps = GetLineChartDataset(data2);
+            lums = GetLineChartDataset(data);
+
+            await lineChart.AddLabels(labels);
+            await lineChart.AddDataSet(temps);
+            await lineChart.AddDataSet(lums);
+
+            await lineChart.Update();
+
+            firstInit = false;
+        }
+
+        if (first)
+        {
+            timer = new Timer(20000);
+
+            timer.Elapsed += HandleUpdate;
+
+            timer.Enabled = true;
+        }
+
+    }
+
+    private void HandleUpdate(object sender, ElapsedEventArgs e)
+    {
+
+        InvokeAsync(async () =>
+        {
+
+            if (datas is not null && datas.Count() > 0)
+            {
+
+                var test = await DataIOTService.GetAllDataEquipmentSearchAsync(EquipmentId, datas[0].Timestamp);
+
+                if (test is not null && test.Count() > 0)
+                {
+
+                    datas.AddRange(test);
+
+                    datas = datas.OrderByDescending(data => data.Timestamp).ToList();
+
+                    var t = datas.Take(20);
+
+                    string[] labels = test.Select(element => ConvertTimestampToString(element.Timestamp)).Reverse().ToArray();
+                    List<long> data = test.Select(element => element.Ligth).Reverse().ToList();
+                    List<long> data2 = test.Select(element => element.Temperature).Reverse().ToList();
+
+
+                    temps.Data.AddRange(data2);
+                    lums.Data.AddRange(data);
+                    await lineChart.AddLabels(labels);
+
+                    await lineChart.Update();
+                }
+
+                StateHasChanged();
+
+            }
+
+        });
+
+    }
+
+    LineChartDataset<long> GetLineChartDataset(List<long> first)
+    {
+        return new LineChartDataset<long>
+        {
+            Label = "# of randoms",
+            Data = first,
+            //BackgroundColor = backgroundColors,
+            //BorderColor = borderColors,
+            Fill = false,
+            PointRadius = 2,
+            BorderDash = new List<int> { },
+
+        };
+    }
+
+    string ConvertTimestampToString(long timestamp)
+    {
+        return DateTimeOffset.FromUnixTimeSeconds(timestamp).UtcDateTime.ToString();
+    }
+
+    public void Dispose()
+    {
+        timer.Stop();
+        timer.Dispose();
+    }
+
 
 }

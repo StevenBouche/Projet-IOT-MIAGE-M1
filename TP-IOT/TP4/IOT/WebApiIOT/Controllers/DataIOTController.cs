@@ -65,5 +65,11 @@ namespace WebApiIOT.Controllers
             return this.Manager.Search(search);
         }
 
+        [HttpPost("searchLast")]
+        public ActionResult<List<DataIOT>> SearchLast([FromBody] SearchDataPeriodView search)
+        {
+            return this.Manager.SearchLast(search);
+        }
+
     }
 }

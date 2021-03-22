@@ -21,16 +21,6 @@ services:
     links:
       - mongoIOT
 
-  webapplicationiot:
-    image: ${DOCKER_REGISTRY-}webapplicationiot
-    build:
-      context: .
-      dockerfile: WebApplicationIOT/Dockerfile
-    depends_on:
-      - webapiiot
-    links:
-      - webapiiot
-
   mqttbroker:
     image: ${DOCKER_REGISTRY-}mqttbroker
     build:
@@ -43,3 +33,13 @@ services:
     links:
       - mongoIOT
 
+  reactiot:
+    container_name: reactiot
+    build:
+        context: ./frontiot-react
+        dockerfile: Dockerfile
+    volumes:
+      - './frontiot-react:/app'
+      - '/app/node_modules'
+    ports:
+      - 80:3000

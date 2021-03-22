@@ -10,6 +10,7 @@ namespace Models.ViewModels
 
         public string EquipmentID { get; set; } 
         public long TimestampAfter { get; set; }
+        public int NbData { get; set; }
 
     }
 }

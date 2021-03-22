@@ -52,6 +52,16 @@ namespace WebApiIOT
                         .WithOrigins("http://localhost:80")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
+
+                    builder
+                       .WithOrigins("http://localhost")
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+
+                    builder
+                       .WithOrigins("http://localhost:3000")
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
                 });
 
              });

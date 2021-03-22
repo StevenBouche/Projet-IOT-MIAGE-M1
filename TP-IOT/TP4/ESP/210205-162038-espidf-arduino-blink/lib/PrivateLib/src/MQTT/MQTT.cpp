@@ -104,6 +104,8 @@ void init_MQTT(PubSubClient* clientMQTT, char* mqtt_server, char* id, int* temp,
   client = clientMQTT; 
   temperature = temp;
   ligth = l;
+  char* Username = "clientProjectIOTMIAGE";
+  char* Password = "XAjNyUPfS8FmBQ[s";
 
   client->setServer(mqtt_server, 1883);
 
@@ -111,7 +113,7 @@ void init_MQTT(PubSubClient* clientMQTT, char* mqtt_server, char* id, int* temp,
 
     Serial.print("Attempting MQTT connection...");
 
-    if (client->connect(id, NULL, NULL)) {
+    if (client->connect(id, Username, Password)) {
       Serial.println("MQTT connected");
 
       //xTaskCreate(&task_mqtt, "task_mqtt", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
