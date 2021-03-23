@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 //todo link api
-let baseURL = 'http://localhost:8080';
+let baseURL = "http://"+window.location.hostname+":8080";
 const RequestManager = {};
 
 function getHeader(){

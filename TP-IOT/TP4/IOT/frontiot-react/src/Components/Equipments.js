@@ -26,14 +26,17 @@ class Equipments extends Component {
         await this.getData();
       }
 
-    selectEquipment(id){
-        this.setState({obj: id});
+    selectEquipment(id, event){
+        event.preventDefault();
+        this.setState({obj: id}, () => {
+            event.target.blur();
+        });
     }
 
-    showEquipment(){    
+    showEquipment(){   
         if(this.state.obj!==null){
             return (
-                <Equipment obj={this.state.obj}></Equipment>
+                <Equipment key={this.state.obj.Id} obj={this.state.obj}></Equipment>
             );
         }
         return;
@@ -55,12 +58,12 @@ class Equipments extends Component {
 
     render() {
       return <div className="equipments"> 
-        <Container fluid style={{ margin: '1%' }}>
+        <Container fluid style={{ padding: '1%' }}>
                 <Row><h2>Equipments</h2></Row>        
                 <Row>
                     {this.state.equipments.map((eq, i) => {     
                         return (
-                            <Card key={eq.Id} style={{ width: '20rem', margin: '1%'  }} >
+                            <Card key={eq.Id} style={{ width: '20rem', marginTop: '1%', marginRight: '1%'  }} >
                                 <Card.Body>
                                 <Card.Title>{eq.equipmentId}</Card.Title>
                                     <Container>
@@ -70,7 +73,7 @@ class Equipments extends Component {
                                     </Container>
                                 </Card.Body>
                                 <Card.Footer>
-                                    <Button variant="primary" onClick={(e) => this.selectEquipment(eq)}>Select</Button>
+                                    <Button variant="primary" onClick={(e) => this.selectEquipment(eq, e)}>Select</Button>
                                 </Card.Footer>
                         </Card>
                         )}
