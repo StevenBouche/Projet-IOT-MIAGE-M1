@@ -25,7 +25,7 @@ class Equipments extends Component {
     async componentDidMount() {
         await this.getData();
         this.interval = setInterval(async () => {
-            await this.updateEquipments()(this)
+            await this.updateEquipments(this)
           }, 1000);
     }
 
