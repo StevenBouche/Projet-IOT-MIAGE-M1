@@ -92,8 +92,8 @@ char* password = "iobwgn7obkf91";
 AsyncWebServer server(80);
 
 // MQTT
-//char* mqtt_server = "ec2-18-223-15-182.us-east-2.compute.amazonaws.com";
-char* mqtt_server = "172.20.10.3";
+char* mqtt_server = "ec2-18-223-15-182.us-east-2.compute.amazonaws.com";
+//char* mqtt_server = "172.20.10.3";
 String whoami; 
 PubSubClient clientMQTT(clientWifi);
 
@@ -181,7 +181,7 @@ void loop() {
     element.print();
     print_network_status();
     task_mqtt();
-    delay(10000);
+    delay(5000);
 }
 
 /*

@@ -24,7 +24,18 @@ class Equipments extends Component {
 
     async componentDidMount() {
         await this.getData();
-      }
+        this.interval = setInterval(async () => {
+            await this.updateEquipments()(this)
+          }, 1000);
+    }
+
+    async updateEquipments(component){
+        await component.getData();
+    }
+
+    async componentWillUnmount() {
+        clearInterval(this.interval);
+    }
 
     selectEquipment(id, event){
         event.preventDefault();

@@ -8,6 +8,11 @@ int* temperature;
 int* ligth;
 PubSubClient* client;
 pthread_t thread_send;
+char* Username = "clientProjectIOTMIAGE";
+char* Password = "XAjNyUPfS8FmBQ[s";
+char* idMQTT;
+bool isConnected;
+bool tryConnect;
 
 /*============== MQTT CALLBACK ===================*/
 
@@ -67,6 +72,33 @@ void mqtt_mysubscribe(PubSubClient* clientMQTT, char* topic) {
 
 }
 
+void tryConnectMQTT(){
+
+    tryConnect = true;
+
+    while (!client->connected()) { // Loop until we're reconnected
+
+    Serial.print("Attempting MQTT connection...");
+
+    if (client->connect(idMQTT, Username, Password)) {
+      Serial.println("MQTT connected");
+
+      //xTaskCreate(&task_mqtt, "task_mqtt", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
+      isConnected = true;
+
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client->state());    
+      Serial.println(" try again in 5 seconds");
+      delay(5000); // Wait 5 seconds before retrying
+    }
+
+  }
+
+  tryConnect = false;
+
+}
+
 void task_mqtt()
 {
     int32_t period = 60 * 5000l; 
@@ -89,13 +121,13 @@ void task_mqtt()
 
         if((client->connected())){
             client->publish("IOT/data", data);  // publish it 
+        } else if(!tryConnect){
+            isConnected = false;
+            tryConnectMQTT();
         }
       
- 
         // Process MQTT ... obligatoire une fois par loop()
         client->loop();
-  
-     
 
 }
 
@@ -104,27 +136,12 @@ void init_MQTT(PubSubClient* clientMQTT, char* mqtt_server, char* id, int* temp,
   client = clientMQTT; 
   temperature = temp;
   ligth = l;
-  char* Username = "clientProjectIOTMIAGE";
-  char* Password = "XAjNyUPfS8FmBQ[s";
-
+  idMQTT = id;
+  isConnected = false;
+  
   client->setServer(mqtt_server, 1883);
 
-  while (!client->connected()) { // Loop until we're reconnected
+  tryConnectMQTT();
 
-    Serial.print("Attempting MQTT connection...");
-
-    if (client->connect(id, Username, Password)) {
-      Serial.println("MQTT connected");
-
-      //xTaskCreate(&task_mqtt, "task_mqtt", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
-
-    } else {
-      Serial.print("failed, rc=");
-      Serial.print(client->state());    
-      Serial.println(" try again in 5 seconds");
-      delay(5000); // Wait 5 seconds before retrying
-    }
-  }
-  
 }
 
