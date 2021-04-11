@@ -120,11 +120,11 @@ Création d'un robot piloter par ESP32, composé de différents capteurs lui per
 	- Client lourd de contrôle : **Garnier Corentin**
 	- Mobile App : **Griseri Pierre**
 
- - Qualité : **Garnier Corentin**
+- Qualité : **Garnier Corentin**
 	 - Commentaire
 	 - Documentation
 
-- Sécurité : **Bouche Steven**
+- Déploiement / Mise en production / Sécurité : **Bouche Steven**
 
 - Rapport : **Parent Margaux**
 
