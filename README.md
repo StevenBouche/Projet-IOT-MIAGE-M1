@@ -135,21 +135,21 @@ Prévisionnel actuellement sur 3 itérations.
 ### Itération 1
 
 - :heavy_check_mark: Assemblage du robot 
-- :arrows_counterclockwise: Mise en place de la conception de l'architecture 
-- :arrows_counterclockwise: Etude sur la connexion des capteurs du robot sur l'ESP32
-- :arrows_counterclockwise: Ecriture des users story 
-- :x: Assemblage robot et ESP32
-- :x: Attribution des users story
+- :heavy_check_mark: Mise en place de la conception de l'architecture 
+- :heavy_check_mark: Etude sur la connexion des capteurs du robot sur l'ESP32
+- :heavy_check_mark: Ecriture des users story 
+- :arrows_counterclockwise: Assemblage robot et ESP32
+- :arrows_counterclockwise: Attribution des users story
 
 ### Itération 2
 
-- :x: Mise en place de la base de données 
-- :x: Mise en place du projet Web app UI
-- :x: Mise en place de l'API
-- :x: Mise en place du broker MQTT
-- :x: Mise en place de l'App de contrôle
-- :x: Mise en place projet ESP32
-- :x: Mise en place de l'app Mobile
+- :heavy_check_mark: Mise en place de la base de données 
+- :arrows_counterclockwise: Mise en place du projet Web app UI
+- :heavy_check_mark: Mise en place de l'API
+- :heavy_check_mark: Mise en place du broker MQTT
+- :heavy_check_mark: Mise en place de l'App de contrôle
+- :heavy_check_mark: Mise en place projet ESP32
+- :arrows_counterclockwise: Mise en place de l'app Mobile
 
 ### Itération 3
 
@@ -157,7 +157,7 @@ Prévisionnel actuellement sur 3 itérations.
 - :x: Mise en place des endpoints API et sécurité
 - :x: Mise en place du dashboard sur la Web app UI
 - :x: Mise en place de la Kinect sur le client lourd 
-- :x: Mise en place des topis sur le borker MQTT
+- :x: Mise en place des topic sur le borker MQTT
 - :x: Connexion de l'ESP32 avec le téléphone par bluetooh via l'application mobile
 
 ## Début de la conception du système : 
