@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MQTTBroker": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
