@@ -35,8 +35,13 @@ namespace APIRobot
 
             //services.AddTransient<IMongoDBContext<Account>, MongoDBContext<Account, IDatabaseSettings>>();
 
+            services.AddSignalR();
+
             services.AddSingleton<MQTTService, MQTTService>()
                     .AddHostedService(services => services.GetService<MQTTService>());
+
+            services.AddSingleton<VideoQueue, VideoQueue>()
+                    .AddHostedService(services => services.GetService<VideoQueue>());
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -64,6 +69,7 @@ namespace APIRobot
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<VideoHub>("/video");
             });
         }
     }

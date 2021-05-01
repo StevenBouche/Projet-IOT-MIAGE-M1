@@ -88,7 +88,7 @@ namespace MQTTBroker.Server
          
         }
 
-        private async void HandlerClientConnection(MqttServerClientConnectedEventArgs e)
+        private void HandlerClientConnection(MqttServerClientConnectedEventArgs e)
         {
 
            
