@@ -182,6 +182,60 @@ void tryRefreshAuthorizationForMqtt(){
 }
 //endregion auth
 
+//region WiFi
+
+/**
+ * Callback WiFi connected. Execute task MQTT Client when connected.
+ */
+void onConnectWifi(){
+  Serial.println("Connected WiFi event trigger.");
+  timeClient.begin();
+  tryRefreshAuthorizationForMqtt();
+  mqttAsyncClient.executeTask();
+}
+
+/**
+ * Callback WiFi dicconnected. Stop task MQTT Client and stop motors.
+ */
+void onDisconnectWifi(){
+  Serial.println("Disconnected WiFi event trigger.");
+  timeClient.end();
+  motor.breakMotors();
+  mqttAsyncClient.stopTask();
+}
+
+/**
+ * Init WiFi. Push all indentifiants wifi for multi AP. 
+ * Subscribe events WiFi whith differents callbacks and execute task WiFi.
+ */
+void initWiFi(){
+
+  Serial.println("Init WiFi connection.");
+
+  int sizeIds = *(&ids + 1) - ids;
+  for(int i = 0; i < sizeIds; i++){
+    wifi.addIdentifiantWifi(ids[i]);
+  }
+  
+  wifi.subEventConnect(onConnectWifi);
+  wifi.subEventDisconnect(onDisconnectWifi);
+
+  Serial.println("End init WiFi connection.");
+
+}
+//endregion WiFi
+
+//region BLE
+
+/**
+ * Init Bluetooth Server with callback on receive message. 
+ */
+void initBLE(){
+  Serial.println("Init Bluetooth server.");
+  btServer.setup(receivedActionBluetooth);
+  Serial.println("End init Bluetooth server.");
+}
+//endregion BLE
 
 void setup() {
 
