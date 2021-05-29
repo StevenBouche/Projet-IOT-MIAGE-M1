@@ -1,8 +1,42 @@
 #include <Arduino.h>
+#include "ArduinoJson.h"
 #include "Wifi/IdentifiantWifi.h"
 #include "Wifi/WifiESP.h"
 
+#include <WiFiUdp.h>
+#include <NTPClient.h>
+
 #include "Models/StateApp.h"
+
+//region Const
+//  Json
+const char* MotorLJson = "MotorL";
+const char* MotorRJson = "MotorR";
+const char* LatitudeJson = "Latitude";
+const char* LongitudeJson = "Longitude";
+const char* IdEspJson = "IdESP";
+const char* TimestampJson = "Timestamp";
+const char* LigthJson= "Ligth";
+const char* TemperatureJson = "Temperature";
+const char* AccessTokenJson = "accessToken";
+const char* ExpirationTokenJson = "expireAt";
+const String idEquipment = "Esp32Robot";
+//  Mqtt
+const uint16_t PortMqtt = 1883;
+const char* HostMqtt = "62.35.150.64";
+const char* DataTopicName = "IOT/Data";
+const String ControlerTopicNameSub = "IOT/Controler/" + idEquipment;
+
+//  Authentification
+const String AuthJson = "{ \"IdEquipment\": \"" + idEquipment +"\", \"Password\": \"25Zjqgr8AQxxZsyz\", \"TypeEquipment\": \"Robot\", \"Role\": \"Station\" }";
+const String AuthUrl = "http://62.35.150.64:8000/api/AuthEquipment/auth";
+String token = "";
+long tokenExpiration = 0;
+// Other
+const int LoopDelay = 5000;
+uint32_t stateBlink = 0;
+int delayTaskBlink = 1000;
+//endregion Const
 
 //region variable_connection
 //  WiFi
@@ -11,11 +45,20 @@ IdentifiantWifi ids[] = {
   IdentifiantWifi("iPhone de Steven", "iobwgn7obkf91")
 };
 WifiESP wifi;
+
+//  Ntp
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP); //time ntp
+
+
 //endregion variable_connection
 
 //region variable_state_handler
 StateApp state;
 //endregion variable_state_handler
+
+
+
 
 void setup() {
 
