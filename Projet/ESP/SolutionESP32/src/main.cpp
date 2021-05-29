@@ -12,6 +12,8 @@
 #include "Handler/MotorHandler.h"
 #include "Handler/SensorHandler.h"
 
+#include "MQTTAsync/MQTTAsyncClient.h"
+
 //region PIN
 #define PIN_MOTOR_L_1_1 12 //D12 OUTPUT
 #define PIN_MOTOR_L_1_2 14 //D14 OUTPUT
@@ -76,6 +78,11 @@ IdentifiantWifi ids[] = {
   IdentifiantWifi("iPhone de Steven", "iobwgn7obkf91")
 };
 WifiESP wifi;
+
+//  Mqtt
+LinkedList<MQTTAction> actions;
+MQTTConfig mqttConfig(HostMqtt, PortMqtt, "", "", "");
+MQTTAsyncClient mqttAsyncClient(&mqttConfig);
 
 //  Ntp
 WiFiUDP ntpUDP;
@@ -184,6 +191,31 @@ void tryRefreshAuthorizationForMqtt(){
 
 //region MQTT
 
+/**
+ * Callback when received data from MQTT broker from topic controler.
+ * 
+ * @param message message received
+ * @param length size of message
+ */
+void receivedActionControler(const byte* message, unsigned int length){
+
+  StaticJsonDocument<256> doc;
+  DeserializationError error = deserializeJson(doc, message, length);
+
+  if(error != DeserializationError::Ok){
+    Serial.println("Error deserialisation"); Serial.println(error.c_str());
+    return;
+  }
+  else if(doc.containsKey(MotorLJson) && doc.containsKey(MotorRJson)){
+    state.motorsState->setMotorL(doc[MotorLJson]);
+    state.motorsState->setMotorR(doc[MotorRJson]);
+    //state.motorsState->print();
+    motor.rotateMotor(MOTOR_L, state.motorsState->getMotorL());
+    motor.rotateMotor(MOTOR_R, state.motorsState->getMotorR());
+  } else {
+    Serial.println("Error json parser");
+  }
+}
 void taskHandlePubCallback(void * args){
   DataMQTT_t *data;
   while(true){
