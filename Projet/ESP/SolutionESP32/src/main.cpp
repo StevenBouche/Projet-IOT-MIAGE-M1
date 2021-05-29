@@ -92,8 +92,14 @@ MotorHandler motor(
   PIN_MOTOR_R_2_1 , 
   PIN_MOTOR_R_2_2, 
   PIN_MOTOR_R_PWM_2);
-//endregion variable_state_handler
-
+ SensorHandler sensors(state.sensorsState, 
+  PIN_SENSOR_TEMPERATURE, 
+  PIN_SENSOR_LIGTH, 
+  OBSTACLE_L, 
+  OBSTACLE_R, 
+  ULTRASONIC_PING, 
+  ULTRASONIC_PONG);
+  //endregion variable_state_handler
 
 
 
