@@ -8,6 +8,15 @@
 
 #include "Models/StateApp.h"
 
+//region PIN
+#define PIN_MOTOR_L_1_1 12 //D12 OUTPUT
+#define PIN_MOTOR_L_1_2 14 //D14 OUTPUT
+#define PIN_MOTOR_L_PWM_1 13 //D13 OUTPUT
+#define PIN_MOTOR_R_2_1 26 //D26 OUTPUT
+#define PIN_MOTOR_R_2_2 25 //D25 OUTPUT
+#define PIN_MOTOR_R_PWM_2 27 //D27 OUTPUT
+#define MOTOR_L (motor_num_t) 1
+#define MOTOR_R (motor_num_t) 2
 //region Const
 //  Json
 const char* MotorLJson = "MotorL";
