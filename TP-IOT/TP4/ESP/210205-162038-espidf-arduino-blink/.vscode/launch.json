@@ -12,7 +12,7 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug",
-            "executable": "h:/Documents/PlatformIO/Projects/210205-162038-espidf-arduino-blink/.pio/build/esp32dev/firmware.elf",
+            "executable": "E:/Documents/Scolarite/MIAGE/Master1/Projet-IOT-MIAGE-M1/TP-IOT/TP4/ESP/210205-162038-espidf-arduino-blink/.pio/build/esp32dev/firmware.elf",
             "projectEnvName": "esp32dev",
             "toolchainBinDir": "C:/Users/steve/.platformio/packages/toolchain-xtensa32/bin",
             "internalConsoleOptions": "openOnSessionStart",
@@ -25,7 +25,7 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
-            "executable": "h:/Documents/PlatformIO/Projects/210205-162038-espidf-arduino-blink/.pio/build/esp32dev/firmware.elf",
+            "executable": "E:/Documents/Scolarite/MIAGE/Master1/Projet-IOT-MIAGE-M1/TP-IOT/TP4/ESP/210205-162038-espidf-arduino-blink/.pio/build/esp32dev/firmware.elf",
             "projectEnvName": "esp32dev",
             "toolchainBinDir": "C:/Users/steve/.platformio/packages/toolchain-xtensa32/bin",
             "internalConsoleOptions": "openOnSessionStart"
