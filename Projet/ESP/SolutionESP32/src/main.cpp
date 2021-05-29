@@ -17,6 +17,16 @@
 #define PIN_MOTOR_R_PWM_2 27 //D27 OUTPUT
 #define MOTOR_L (motor_num_t) 1
 #define MOTOR_R (motor_num_t) 2
+#define PIN_SENSOR_LIGTH (adc1_channel_t) ADC1_CHANNEL_5 //D34 INPUT
+#define PIN_SENSOR_TEMPERATURE (uint8_t) 35 //D35 INPUT
+#define OBSTACLE_L 19
+#define OBSTACLE_R 21
+#define ULTRASONIC_PING 23
+#define ULTRASONIC_PONG 22
+#define BLINK_LED_GREEN (gpio_num_t) 19
+//endregion PIN
+
+
 //region Const
 //  Json
 const char* MotorLJson = "MotorL";
