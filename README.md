@@ -138,13 +138,13 @@ Prévisionnel actuellement sur 3 itérations.
 - :heavy_check_mark: Mise en place de la conception de l'architecture 
 - :heavy_check_mark: Etude sur la connexion des capteurs du robot sur l'ESP32
 - :heavy_check_mark: Ecriture des users story 
-- :arrows_counterclockwise: Assemblage robot et ESP32
-- :arrows_counterclockwise: Attribution des users story
+- :heavy_check_mark: Assemblage robot et ESP32
+- :heavy_check_mark: Attribution des users story
 
 ### Itération 2
 
 - :heavy_check_mark: Mise en place de la base de données 
-- :arrows_counterclockwise: Mise en place du projet Web app UI
+- :heavy_check_mark: Mise en place du projet Web app UI
 - :heavy_check_mark: Mise en place de l'API
 - :heavy_check_mark: Mise en place du broker MQTT
 - :heavy_check_mark: Mise en place de l'App de contrôle
@@ -153,11 +153,11 @@ Prévisionnel actuellement sur 3 itérations.
 
 ### Itération 3
 
-- :x: Développement des modes de déplacements 
-- :x: Mise en place des endpoints API et sécurité
-- :x: Mise en place du dashboard sur la Web app UI
-- :x: Mise en place de la Kinect sur le client lourd 
-- :x: Mise en place des topic sur le borker MQTT
+- :heavy_check_mark: Développement des modes de déplacements 
+- :heavy_check_mark: Mise en place des endpoints API et sécurité
+- :heavy_check_mark: Mise en place du dashboard sur la Web app UI
+- :heavy_check_mark: Mise en place de la Kinect sur le client lourd 
+- :heavy_check_mark: Mise en place des topic sur le borker MQTT
 - :x: Connexion de l'ESP32 avec le téléphone par bluetooh via l'application mobile
 
 ## Début de la conception du système : 
