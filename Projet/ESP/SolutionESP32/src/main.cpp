@@ -9,6 +9,9 @@
 #include "Bluetooth/BTServer.h"
 #include "Models/StateApp.h"
 
+#include "Handler/MotorHandler.h"
+#include "Handler/SensorHandler.h"
+
 //region PIN
 #define PIN_MOTOR_L_1_1 12 //D12 OUTPUT
 #define PIN_MOTOR_L_1_2 14 //D14 OUTPUT
