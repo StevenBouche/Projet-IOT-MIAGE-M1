@@ -237,6 +237,30 @@ void initBLE(){
 }
 //endregion BLE
 
+//region SendData
+void sendDataIOT(){
+
+  //actualize data before send MQTT broker
+  sensors.readValues();
+
+  //Serialize data
+  String output;
+  DynamicJsonDocument doc(512);
+
+  doc[IdEspJson] = idEquipment.c_str();
+  doc[LatitudeJson] = state.gpsState->getLatitude();
+  doc[LongitudeJson] = state.gpsState->getLongitude();
+  doc[LigthJson] = state.sensorsState->getLight();
+  doc[TemperatureJson] = state.sensorsState->getTemperature();
+
+  serializeJson(doc, output);
+
+  //Serial.println(output);
+  //send data to broker
+  mqttAsyncClient.sendData(DataTopicName, output);
+}
+//end region SendData
+
 void setup() {
 
 }
