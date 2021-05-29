@@ -182,6 +182,67 @@ void tryRefreshAuthorizationForMqtt(){
 }
 //endregion auth
 
+//region MQTT
+
+void taskHandlePubCallback(void * args){
+  DataMQTT_t *data;
+  while(true){
+    BaseType_t t = xQueueReceive(queue, &data, portMAX_DELAY);
+    if(t == pdPASS)
+    {
+     for(int i = 0; i < actions.size(); i++){
+        if(actions.get(i).getTopic() == data->topic){
+          actions.get(i).getHandler()((const byte*) data->message,data->length);
+          break;
+        }
+      }
+    }
+    vPortFree(data); 
+  }
+  vTaskDelete(NULL);
+}
+
+void mqtt_pubcallback_async(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total){
+  size_t lenTopic = strlen(topic)+1;
+  DataMQTT_t * data = reinterpret_cast<DataMQTT_t*>(pvPortMalloc(sizeof(DataMQTT_t)));
+  data->length = len;
+  data->topic = (char*)pvPortMalloc(lenTopic*sizeof(char));
+  data->message = (byte*)pvPortMalloc(len*sizeof(byte));
+  memcpy(data->message,payload,len);
+  strcpy(data->topic,topic);
+  xQueueSend(queue, (void*) &data, portMAX_DELAY);
+}
+
+void onConnectMqtt(){
+
+}
+
+void onDisconnectMqtt(){
+  motor.breakMotors();
+  tryRefreshAuthorizationForMqtt();
+}
+
+
+/**
+ * Init MQTT Client. 
+ * Create actions for subscribe topics and execute a callback associate with topic.
+ */
+void initMQTT(){
+
+  Serial.println("Init MQTT connection.");
+
+  MQTTAction actionToto = MQTTAction(ControlerTopicNameSub, receivedActionControler);
+  actions.add(actionToto);
+  mqttAsyncClient.setConnectCallback(onConnectMqtt);
+  mqttAsyncClient.setDisconnectCallback(onDisconnectMqtt);
+  mqttAsyncClient.setMessageCallback(mqtt_pubcallback_async);
+  mqttAsyncClient.addTopic(ControlerTopicNameSub.c_str());
+
+  Serial.println("End init MQTT connection.");
+}
+
+//endregion MQTT
+
 //region WiFi
 
 /**
