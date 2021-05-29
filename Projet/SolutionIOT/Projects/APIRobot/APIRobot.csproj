@@ -25,4 +25,10 @@
     <ProjectReference Include="..\SharedModels\SharedModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="HostedServices\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>
