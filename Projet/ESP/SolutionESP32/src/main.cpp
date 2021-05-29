@@ -57,6 +57,14 @@ uint32_t stateBlink = 0;
 int delayTaskBlink = 1000;
 //endregion Const
 
+typedef struct DataMQTT {
+  char * topic;
+  byte * message; 
+  unsigned int length;
+} DataMQTT_t;
+
+QueueHandle_t queue;
+
 //region variable_connection
 //  WiFi
 IdentifiantWifi ids[] = {
