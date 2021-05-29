@@ -5,7 +5,8 @@
 
 #include <WiFiUdp.h>
 #include <NTPClient.h>
-
+#include <HTTPClient.h>
+#include "Bluetooth/BTServer.h"
 #include "Models/StateApp.h"
 
 //region PIN
@@ -76,8 +77,10 @@ WifiESP wifi;
 //  Ntp
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP); //time ntp
-
-
+//  Http
+HTTPClient http; 
+//  Bluetooth
+BTServer btServer;
 //endregion variable_connection
 
 //region variable_state_handler
