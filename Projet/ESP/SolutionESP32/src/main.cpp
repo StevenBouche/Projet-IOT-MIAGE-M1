@@ -9,9 +9,6 @@
 #include "Bluetooth/BTServer.h"
 #include "Models/StateApp.h"
 
-#include "Handler/MotorHandler.h"
-#include "Handler/SensorHandler.h"
-
 //region PIN
 #define PIN_MOTOR_L_1_1 12 //D12 OUTPUT
 #define PIN_MOTOR_L_1_2 14 //D14 OUTPUT
@@ -104,6 +101,83 @@ MotorHandler motor(
   ULTRASONIC_PONG);
   //endregion variable_state_handler
 
+void printAuth(unsigned long currentTime){
+  String s = "Token authentification : ";
+  s += String(token) + "\n";
+  s += "Valid time in second : ";
+  s += String(tokenExpiration-currentTime) + "seconds\n";
+  Serial.println(s);
+}
+
+bool setToken(String message, unsigned long currentTime){
+
+  StaticJsonDocument<512> doc;
+  DeserializationError error = deserializeJson(doc, message.c_str(), message.length());
+
+  if(error != DeserializationError::Ok)
+      Serial.println(error.c_str());
+  else if(doc.containsKey(AccessTokenJson) && doc.containsKey(ExpirationTokenJson)){
+      token = String((const char *)doc[AccessTokenJson]);
+      tokenExpiration = doc[ExpirationTokenJson];
+      printAuth(currentTime);
+      return true;
+  } else 
+    Serial.println("Error json parser");
+  
+  return false;
+}
+
+bool authProcess(unsigned long currentTime){
+
+  Serial.println("Start authentification.");
+
+  bool result = false;
+  String payload = ""; 
+
+  http.begin(AuthUrl);
+
+  http.addHeader("Content-Type", "application/json");
+  int httpResponseCode = http.POST(AuthJson);
+
+  Serial.println("HTTP Response code: " + String(httpResponseCode)); 
+
+  if (httpResponseCode > 0) {
+    payload = http.getString();
+    result = setToken(payload,currentTime);
+  }
+
+  http.end();
+  return result;
+}
+
+void tryRefreshAuthorizationForMqtt(){
+
+  if(mqttAsyncClient.connected())
+    return;
+
+  if(!wifi.isConnected())
+    return;
+
+  timeClient.update();
+  unsigned long currentTime = timeClient.getEpochTime();
+
+  String s = "Verify expiration token authentification : \n\tCurrent : ";
+  s += String(currentTime) + "\n";
+  s += "\tExpiration : " + String(tokenExpiration) + "\n";
+  Serial.println(s);
+
+  if(currentTime<tokenExpiration)
+    return;
+  
+  if(!authProcess(currentTime))
+    return;
+  
+  mqttConfig.setUsername(token);
+  mqttConfig.setID(wifi.getAddrMac());
+  mqttConfig.printConfig();
+
+}
+//endregion auth
 
 
 void setup() {
