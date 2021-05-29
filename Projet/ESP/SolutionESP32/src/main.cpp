@@ -228,6 +228,25 @@ void initWiFi(){
 //region BLE
 
 /**
+ * Callback when received data from Bluetooth client.
+ * 
+ * @param message message received
+ */
+void receivedActionBluetooth(String *message){
+
+  StaticJsonDocument<256> doc;
+  DeserializationError error = deserializeJson(doc, message->c_str());
+
+  if(error != DeserializationError::Ok)
+      return;
+
+  if(doc.containsKey(LatitudeJson) && doc.containsKey(LongitudeJson)){
+    state.gpsState->setLongitude(doc[LongitudeJson]);
+    state.gpsState->setLatitude(doc[LatitudeJson]);
+  }
+}
+
+/**
  * Init Bluetooth Server with callback on receive message. 
  */
 void initBLE(){
@@ -261,11 +280,62 @@ void sendDataIOT(){
 }
 //end region SendData
 
+void taskActionConnection(void * args){
+
+  while(true){
+
+    if(!wifi.isConnected() && !mqttAsyncClient.connected()){
+      delayTaskBlink = 300;
+      stateBlink = stateBlink == 0 ? 1 : 0;
+    }
+    else if(wifi.isConnected() && !mqttAsyncClient.connected()){
+      delayTaskBlink = 150;
+      stateBlink = stateBlink == 0 ? 1 : 0;
+    }
+    else if(wifi.isConnected() && mqttAsyncClient.connected()){
+      delayTaskBlink = 2000;
+      stateBlink = 1;
+    }
+      
+    gpio_set_level(BLINK_LED_GREEN,  stateBlink);
+    vTaskDelay(delayTaskBlink);
+  }
+
+  vTaskDelete(NULL);
+}
+
 void setup() {
+
+  initArduino();
+  Serial.begin(115200);
+
+  http.setReuse(true);
+
+  //init queue mqtt
+  queue = xQueueCreate(10, sizeof(struct DataMQTT));
+  xTaskCreatePinnedToCore(taskHandlePubCallback, "QueueTCP", 16384, NULL, 1, NULL, 0);
+  xTaskCreatePinnedToCore(taskActionConnection, "ActionConnection", 2048, NULL, 2, NULL, 0);
+
+  motor.init();
+  sensors.initSensors();
+
+  initWiFi();
+  initMQTT();
+
+  gpio_pad_select_gpio(BLINK_LED_GREEN);
+  gpio_set_direction(BLINK_LED_GREEN, GPIO_MODE_OUTPUT);
+
+  wifi.executeTask();
+
+  while(!wifi.isConnected()){
+    delay(1000);
+  }
+    
+  initBLE();
 
 }
 
 void loop() {
- 
-  delay(1000);
+  sendDataIOT();
+  delay(LoopDelay);
 }
