@@ -1,0 +1,25 @@
+mat-card{
+    text-align: center;
+}
+mdb-card{
+    text-align: center;
+}
+
+.icon-enable {
+    color: rgb(52, 185, 25);
+}
+
+.icon-off {
+    color: rgb(192, 28, 28) !important;
+}
+
+.button-item{
+    color: white;
+    background-color: #673ab7;
+}
+
+.card-header{
+    text-align: center;
+    background-color: #673ab7;
+    color: white;
+}

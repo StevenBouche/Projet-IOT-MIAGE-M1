@@ -1,0 +1,31 @@
+
+<div class="row wow fadeIn row-eq-height">
+    <div class="col-lg-3 col-md-12 mb-4" *ngFor="let equipment of equipmentsState">
+        <mdb-card> 
+            <div class="card-header"><strong>{{equipment.idEquipment}} - {{equipment.typeEquipment}}</strong></div>
+            <mdb-card-body>
+                <div style="display: block">
+                    <div class="row wow fadeIn row-eq-height">
+                        <ng-container *ngIf="equipment.equipments.length > 0; then connected; else disconnected"></ng-container>
+                        <ng-template #connected>
+                            <div class="col-12">
+                                <mat-icon class="icon-enable">wifi</mat-icon>
+                            </div>
+                        </ng-template>
+                        <ng-template #disconnected>
+                            <div class="col-12">
+                                <mat-icon class="icon-off">wifi_off</mat-icon>
+                            </div>
+                            <div class="col-12">
+                                <span>Equipment have no connections</span>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+            </mdb-card-body>
+            <mdb-card-footer>
+                <button mat-button class="button-item" routerLink="/dashboard/{{equipment.idEquipment}}">Show</button>
+            </mdb-card-footer>
+        </mdb-card>
+    </div>
+</div>

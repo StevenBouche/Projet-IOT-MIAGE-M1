@@ -1,0 +1,24 @@
+<mat-toolbar #toolbar color="primary" class="app-toolbar mat-elevation-z6" >
+    <button mat-mini-fab color="primary" aria-label="Example icon button with a menu icon" (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span class="example-spacer"></span>
+    <h3>IOT Application</h3>
+</mat-toolbar>
+
+<mat-sidenav-container [hasBackdrop]="false">
+    <!-- Sidenav -->
+    <mat-sidenav #sidenav color="amber" [mode]="isBiggerScreen() ? 'over' : 'side'" [(opened)]="opened" [fixedInViewport]="true" [fixedTopGap]>
+      <mat-nav-list>
+        <a mat-list-item class="item-list" routerLink="/dashboard">
+          <mat-icon class>dashboard</mat-icon> Dashboard
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+    <!-- Main content -->
+    <mat-sidenav-content >
+      <div class="container-fluid mt-3">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>
