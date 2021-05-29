@@ -85,6 +85,13 @@ BTServer btServer;
 
 //region variable_state_handler
 StateApp state;
+MotorHandler motor(
+  PIN_MOTOR_L_1_1, 
+  PIN_MOTOR_L_1_2, 
+  PIN_MOTOR_L_PWM_1, 
+  PIN_MOTOR_R_2_1 , 
+  PIN_MOTOR_R_2_2, 
+  PIN_MOTOR_R_PWM_2);
 //endregion variable_state_handler
 
 
