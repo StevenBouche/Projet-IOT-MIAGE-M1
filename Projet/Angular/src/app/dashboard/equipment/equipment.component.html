@@ -1,0 +1,191 @@
+
+
+
+
+
+
+<div class="row wow fadeIn">
+
+    <ng-container *ngIf="equipment != undefined; then exist; else dontExist"></ng-container>
+
+    <ng-template #dontExist></ng-template>
+
+    <ng-template #exist>
+        <div class="col-12 mb-4">
+            <mdb-card>
+                <div class="card-header">
+                    <strong> Détails : {{equipment.idEquipment}} - {{equipment.typeEquipment}}</strong>
+                </div>
+                <mdb-card-body>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 mb-4" *ngIf="lastDataRobot != undefined">
+                            <mdb-card>
+                                <div class="card-header">
+                                    <strong>Latest Data</strong>
+                                </div>
+                                <mdb-card-body>
+                                    <table class="table">
+                                        <tbody>
+                                          <tr>
+                                            <td scope="row">Temperature</td>
+                                            <td>{{lastDataRobot.temperature}}</td>
+                                          </tr>
+                                          <tr>
+                                            <td scope="row">Ligth</td>
+                                            <td>{{lastDataRobot.ligth}}</td>
+                                          </tr>
+                                          <tr>
+                                            <td scope="row">Latitude</td>
+                                            <td>{{lastDataRobot.longitude}}</td>
+                                          </tr>
+                                          <tr>
+                                            <td scope="row">Longitude</td>
+                                            <td>{{lastDataRobot.latitude}}</td>
+                                          </tr>
+                                          <tr>
+                                            <td scope="row">Timestamp</td>
+                                            <td>{{lastDate}}</td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                </mdb-card-body>
+                            </mdb-card>
+                        </div>
+                        <div class="col-lg-6 col-md-12 mb-4" *ngIf="lastDataRobot == undefined">
+                            <mdb-card>
+                                <div class="card-header">
+                                    <strong>Latest Data</strong>
+                                </div>
+                                <mdb-card-body>
+                                    <table class="table">
+                                        <tbody>
+                                          <tr>
+                                            <td scope="row">Temperature</td>
+                                            <td>N/A</td>
+                                          </tr>
+                                          <tr>
+                                            <td scope="row">Ligth</td>
+                                            <td>N/A</td>
+                                          </tr>
+                                          <tr>
+                                            <td scope="row">Latitude</td>
+                                            <td>N/A</td>
+                                          </tr>
+                                          <tr>
+                                            <td scope="row">Longitude</td>
+                                            <td>N/A</td>
+                                          </tr>
+                                          <tr>
+                                            <td scope="row">Timestamp</td>
+                                            <td>N/A</td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                </mdb-card-body>
+                            </mdb-card>
+                        </div>
+                        <div class="col-lg-6 col-md-12 mb-4">
+                            <mdb-card>
+                                <div class="card-header">
+                                    <strong>Services</strong>
+                                </div>
+                                <mdb-card-body>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">IdConnection</th>
+                                                    <th scope="col">Role</th>
+                                                    <th scope="col">AddressIp</th>
+                                                </tr>
+                                              </thead>
+                                            <tbody>
+                                                <tr *ngFor="let value of equipment.equipments">
+                                                    <td>{{value.serviceName}}</td>
+                                                    <td>{{value.idConnection}}</td>
+                                                    <td>{{value.role}}</td>
+                                                    <td>{{value.adressIp}}</td>
+                                                </tr>
+                                            </tbody>
+                                          </table>
+                                    </div>
+                                </mdb-card-body>
+                            </mdb-card>
+                        </div>
+                    </div>
+                </mdb-card-body>
+            </mdb-card>
+        </div>
+        <div class="col-lg-6 col-md-12 mb-4" *ngIf="lastDataRobot != undefined">
+            <mdb-card>
+                <div class="card-header">
+                    <strong>Geolocation</strong>
+                </div>
+                <mdb-card-body>
+                        <agm-map [latitude]="lastDataRobot.latitude" [longitude]="lastDataRobot.longitude" [mapTypeId]="'roadmap'" style="height: 300px">
+                            <agm-marker [latitude]="lastDataRobot.latitude" [longitude]="lastDataRobot.longitude"></agm-marker>
+                        </agm-map>
+                </mdb-card-body>
+            </mdb-card>
+        </div>
+        <div class="col-lg-6 col-md-12 mb-4">
+            <mdb-card>
+                <div class="card-header">
+                    <strong>Stream</strong>
+                </div>
+                <mdb-card-body>
+                    <div class="card-body text-center" id="containerStream">
+                        <img alt="stream"  class="image img-fluid" src="assets/FreeVector-No-Signal-TV.jpg"><img>
+                    </div>
+                </mdb-card-body>
+            </mdb-card>
+        </div>
+        <div class="col-lg-4 col-md-12 mb-4">
+            <mdb-card>
+                <div class="card-header">
+                    <strong>Line chart Ligth</strong>
+                </div>
+                <mdb-card-body>
+                    <div style="display: block">
+                        <canvas baseChart [chartType]="chartTypeLigth" [datasets]="chartDatasetsLigth" [labels]="chartLabelsLigth"
+                                [colors]="chartColors" [options]="chartOptions"
+                                [legend]="true">
+                        </canvas>
+                    </div>
+                </mdb-card-body>
+            </mdb-card>
+        </div>
+        <div class="col-lg-4 col-md-12 mb-4">
+            <mdb-card>
+                <div class="card-header">
+                    <strong>Line chart Temperature</strong>
+                </div>
+                <mdb-card-body>
+                    <div style="display: block">
+                        <canvas baseChart [chartType]="chartTypeTemperature" [datasets]="chartDatasetsTemperature" [labels]="chartLabelsTemperature"
+                                [colors]="chartColors" [options]="chartOptions"
+                                [legend]="true">
+                        </canvas>
+                    </div>
+                </mdb-card-body>
+            </mdb-card>
+        </div>
+        <div class="col-lg-4 col-md-12 mb-4">
+            <mdb-card>
+                <div class="card-header">
+                    <strong>Bar chart Motor</strong>
+                </div>
+                <mdb-card-body>
+                    <div style="display: block">
+                        <canvas baseChart [chartType]="chartTypeMotor" [datasets]="chartDatasetsMotor" [labels]="chartLabelsMotor"
+                                [colors]="chartColors" [options]="chartOptionsMotor"
+                                [legend]="true">
+                        </canvas>
+                    </div>
+                </mdb-card-body>
+            </mdb-card>
+        </div>
+    </ng-template>
+</div>
+
