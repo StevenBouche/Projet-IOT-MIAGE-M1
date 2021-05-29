@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  mongoApp:
+    container_name: mongoApp
+    image: mongo:latest
+    restart: always
+    volumes:
+      - ./mongodb/db:/data/db
+    ports:
+      - "27017:27017"
+
+  mongoseeding:
+    image: ${DOCKER_REGISTRY-}mongoseeding
+    build:
+      context: ./../SolutionIOT
+      dockerfile: Projects/MongoSeeding/Dockerfile
+    links:
+      - mongoApp
+
+  apirobot:
+    image: ${DOCKER_REGISTRY-}apirobot
+    build:
+      context: ./../SolutionIOT
+      dockerfile: Projects/APIRobot/Dockerfile
+    links:
+        - mongoApp
+
+  frontrobot:
+    container_name: FrontRobot
+    image: ${DOCKER_REGISTRY-}frontrobot
+    build:
+      context: ./../Angular
+      dockerfile: Dockerfile
+    links:
+        - apirobot

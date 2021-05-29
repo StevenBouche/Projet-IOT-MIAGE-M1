@@ -1,0 +1,6 @@
+version: '3.4'
+
+services:
+  apirobot:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
