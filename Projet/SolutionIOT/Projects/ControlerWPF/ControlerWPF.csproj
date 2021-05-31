@@ -166,6 +166,9 @@
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Compile Include="Controls\ControlerPage.xaml.cs">
+      <DependentUpon>ControlerPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\ControlerService.cs" />
     <Compile Include="Services\KinectService.cs" />
     <Compile Include="Services\MQTTService.cs" />
@@ -188,9 +191,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configs\MQTTServiceConfig.cs" />
-    <Compile Include="Controls\ControlerPage.xaml.cs">
-      <DependentUpon>ControlerPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\KinectPage.xaml.cs">
       <DependentUpon>KinectPage.xaml</DependentUpon>
     </Compile>

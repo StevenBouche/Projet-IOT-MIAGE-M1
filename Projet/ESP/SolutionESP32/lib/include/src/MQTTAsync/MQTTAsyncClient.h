@@ -9,6 +9,7 @@
 #include <mutex> 
 #include <condition_variable> 
 #include "LinkedList.h"
+#include <functional>
 
 typedef std::function<void()> OnConnectMqtt;
 typedef std::function<void()> OnDisconnectMqtt;
