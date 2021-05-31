@@ -76,12 +76,21 @@ WifiESP wifi;
 #pragma endregion WifiVariables
 
 #pragma region MqttVariables
-const uint16_t PortMqtt = 1883;
+
 const char* HostMqtt = "62.35.150.64";
 const char* DataTopicName = "IOT/Data";
 const String ControlerTopicNameSub = "IOT/Controler/" + idEquipment;
+
+#if ASYNC_TCP_SSL_ENABLED
+bool mqttSecure = true;
+const uint16_t PortMqtt = 8884;
+#else
+bool mqttSecure = false;
+const uint16_t PortMqtt = 1883;
+#endif
+
 LinkedList<MQTTAction> actions;
-MQTTConfig mqttConfig(HostMqtt, PortMqtt, "", "", "");
+MQTTConfig mqttConfig(HostMqtt, PortMqtt, "", "", "", mqttSecure);
 MQTTAsyncClient mqttAsyncClient(&mqttConfig);
 #pragma endregion MqttVariables
 

@@ -14,6 +14,8 @@
 typedef std::function<void()> OnConnectMqtt;
 typedef std::function<void()> OnDisconnectMqtt;
 
+#define MQTT_SERVER_FINGERPRINT {0xf2, 0x70, 0x12, 0xcf, 0x89, 0x44, 0x92, 0xfd, 0xa3, 0xae, 0xeb, 0x5e, 0x34, 0xcb, 0x27, 0x7a, 0x9a, 0x44, 0x64, 0xf4};
+
 class MQTTAsyncClient : public TaskRobot {
 
     private:
@@ -148,6 +150,12 @@ void MQTTAsyncClient::execute(){
     mqttClient.setClientId(this->idClient);
     mqttClient.setServer(this->config->getHost(), this->config->getPort());
 
+    #if ASYNC_TCP_SSL_ENABLED
+        mqttClient.setSecure(this->config->secure);
+        if (this->config->secure) {
+            mqttClient.addServerFingerprint((const uint8_t[])MQTT_SERVER_FINGERPRINT);
+        }
+    #endif
 }
 
 void MQTTAsyncClient::sendData(const char* topic, String payload){

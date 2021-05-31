@@ -95,10 +95,10 @@ namespace APIRobot.HostedServices
             {
                 var certificate = new X509Certificate2(ConfigCert.Value.AbsolutePath, ConfigCert.Value.Password, X509KeyStorageFlags.Exportable);
 
-              /*  options.WithEncryptedEndpoint()
+                options.WithEncryptedEndpoint()
                     .WithEncryptedEndpointPort(ConfigService.Value.MQTTConfigBroker.EncryptedPort)
                     .WithEncryptionCertificate(certificate.Export(X509ContentType.Pfx))
-                    .WithEncryptionSslProtocol(SslProtocols.Tls12);*/
+                    .WithEncryptionSslProtocol(SslProtocols.Tls12);
 
             } catch (CryptographicException e)
             {
@@ -177,7 +177,7 @@ namespace APIRobot.HostedServices
                 }
             }
 
-            //Logger.LogInformation($"{e.ClientId} published message to topic {e.ApplicationMessage.Topic}.");
+            Logger.LogInformation($"{e.ClientId} published message to topic {e.ApplicationMessage.Topic}.");
         }
 
         private void HandlerDataRobot(EquipmentValue equipment, MqttApplicationMessageReceivedEventArgs eventMQTT)

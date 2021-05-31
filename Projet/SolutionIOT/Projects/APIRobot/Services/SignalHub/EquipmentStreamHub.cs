@@ -2,7 +2,9 @@
 using APIRobot.Services.Cache;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Channels;
+using System.Threading.Tasks;
 
 namespace APIRobot.Services.SignalHub
 {
@@ -25,6 +27,22 @@ namespace APIRobot.Services.SignalHub
         public ChannelReader<MotorValues> EquipmentStreamMotor(string idEquipment)
         {
             return ChannelHandler.GetChannelsEquipment(idEquipment)?.StreamMotor.Reader;
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+
+            await base.OnConnectedAsync();
+
+            Logger.LogInformation($"Client connected.");
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+
+            await base.OnDisconnectedAsync(exception);
+
+            Logger.LogInformation($"Client disconnected.");
         }
 
     }

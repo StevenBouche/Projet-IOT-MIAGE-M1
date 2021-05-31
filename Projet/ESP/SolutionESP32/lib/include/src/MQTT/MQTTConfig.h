@@ -9,15 +9,19 @@ class MQTTConfig{
         const char* host;
         String id, username, passwd;
         uint16_t port;
+        
 
     public:
 
-        MQTTConfig(const char* host, uint16_t port, String id, String username, String passwd){
+        bool secure;
+        
+        MQTTConfig(const char* host, uint16_t port, String id, String username, String passwd, bool secure){
             this->host = host;
             this->port = port;
             this->id = id;
             this->username = username;
             this->passwd = passwd;
+            this->secure = secure;
         }
 
         void printConfig(){
