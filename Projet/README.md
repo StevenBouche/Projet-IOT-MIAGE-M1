@@ -1,4 +1,4 @@
-# Projet de Robot IOT
+# IOT - Projet robot
 
 Le projet contient :
 
@@ -9,6 +9,7 @@ Le projet contient :
 - DockerCompose : Contient tous les docker compose pour l'éxecution des applications, database. 
 - Certificates : Contient tous les certificats pour les différentes applications. 
 
+A noter que chaque partie du projet contient son propre readme.md ! 
 
 
 
