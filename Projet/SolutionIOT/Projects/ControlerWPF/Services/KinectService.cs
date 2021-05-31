@@ -18,18 +18,6 @@ namespace ControlerWPF.Services
             WaitSync
         }
 
-        class CouplePoint
-        {
-            public float P1 { get; set; }
-            public float P2 { get; set; }
-
-            public CouplePoint(float p1, float p2)
-            {
-                this.P1 = p1;
-                this.P2 = p2;
-            }
-        }
-
         class PointsSkeleton
         {
             public SkeletonPoint EL { get; set; }
@@ -58,7 +46,6 @@ namespace ControlerWPF.Services
                 this.HR = points.HR;
                 this.HL = points.HL;
             }
-
         }
 
         public class DataMotors
@@ -77,18 +64,32 @@ namespace ControlerWPF.Services
             }
         }
 
+        //parameters
+        private readonly double PrecisionMesure = 0.15;
+        private readonly double PrecisionMesureInv = -0.15;
+        private readonly double DeadZone = 20;
+        private readonly double DeadZoneInv = -20;
+        private readonly int MinVariation = -2000;
+        private readonly int MaxVariation = 2000;
+
+        //Actions status
         private DetectorSync Status;
-        private readonly double PrecisionMesure;
-        private readonly int MinVariation = -20;
-        private readonly int MaxVariation = 20;
-        private readonly Dictionary<DetectorSync, Action<PointsSkeleton>> Actions;
+        private readonly Dictionary<DetectorSync, Func<PointsSkeleton,MotorValues>> Actions;
+
+        //Points
         private readonly PointsSkeleton Points;
         private readonly PointsSkeleton SkeletonSync;
+
+        //Data
         private readonly DataMotors Data;
+        private readonly MotorValues MotorValues;
+
+        //Queue
         private readonly ConcurrentQueue<Skeleton> Queue;
         private readonly ManualResetEvent AllDone = new ManualResetEvent(false);
         private bool Running = false;
-        private readonly MotorValues MotorValues;
+        
+        //Task
         public MQTTService MqttService { get; set; }
         private Task KinectTask;
 
@@ -97,14 +98,13 @@ namespace ControlerWPF.Services
 
         public KinectService()
         {
-            PrecisionMesure = 0.12;
             Status = DetectorSync.WaitSync;
             Points = new PointsSkeleton();
             SkeletonSync = new PointsSkeleton();
             Queue = new ConcurrentQueue<Skeleton>();
             MotorValues = new MotorValues();
             Data = new DataMotors();
-            Actions = new Dictionary<DetectorSync, Action<PointsSkeleton>>();
+            Actions = new Dictionary<DetectorSync, Func<PointsSkeleton,MotorValues>>();
             this.InitActions();
         }
 
@@ -134,17 +134,30 @@ namespace ControlerWPF.Services
                 {
                     Points.Update(skeleton);
 
-                    if (Actions.TryGetValue(Status, out Action<PointsSkeleton> action))
+                    if (Actions.TryGetValue(Status, out Func<PointsSkeleton, MotorValues> action))
                     {
-                        action.Invoke(Points);
+                        //get data motor in function of state
+                        MotorValues value = action.Invoke(Points);
 
-                        if (MqttService != null)
-                                await MqttService.SendDataMotors(MotorValues);
+                        //calculate diff between new value and last
+                        long diffLAbs = Math.Abs(MotorValues.MotorL - value.MotorL);
+                        long diffRAbs = Math.Abs(MotorValues.MotorR - value.MotorR);
 
+                        //if diff is more than 2
+                        if (diffLAbs > 10 || diffRAbs > 10)
+                        {
+                            //actualize data
+                            MotorValues.MotorL = value.MotorL;
+                            MotorValues.MotorR = value.MotorR;
+
+                            //and send to mqtt broker
+                            if (MqttService != null)
+                               await MqttService.SendDataMotors(MotorValues);
+                        }
+                        //callback after calcul
                         CallbackAnalyse(Status, Data, MotorValues);
                     }
                 }
-
                 AllDone.WaitOne();
             }
         }
@@ -156,150 +169,129 @@ namespace ControlerWPF.Services
             KinectTask?.Wait();
         }
 
-        public void NewFrame(Skeleton[] skeleton)
+        public async void NewFrame(Skeleton[] skeleton)
         {
             if (skeleton.Length == 0)
+            {
+                if(Status == DetectorSync.Sync)
+                {
+                    Status = DetectorSync.WaitSync;
+                    MotorValues.MotorL = 0;
+                    MotorValues.MotorR = 0;
+
+                    if (MqttService != null)
+                        await MqttService.SendDataMotors(MotorValues);
+                }
                 return;
+            }
+                
 
             Queue.Enqueue(skeleton[0]);
 
             AllDone.Set();
         }
 
-        private void StepWaitSync(PointsSkeleton points)
+        private MotorValues StepWaitSync(PointsSkeleton points)
         {
+            var value = new MotorValues();
 
-            if (!IsSync(GetConditionWaitSync(points)))
-                return;
+            if (!IsSync(GetDiffConditionWaitSync(points)))
+                return value;
            
             SkeletonSync.Update(points);
             Data.PlageVariationLeft = (points.EL.Z - points.HL.Z ) * 100;
             Data.PlageVariationRigth = (points.ER.Z - points.HR.Z) * 100;
 
             Status = DetectorSync.Sync;
-            StepSync(points);
+            return StepSync(points);
         }
 
-        private void StepSync(PointsSkeleton points)
+        private MotorValues StepSync(PointsSkeleton points)
         {
 
-            if (!IsSync(GetConditionSync(points)))
+            var value = new MotorValues();
+
+            if (!IsSync(GetDiffConditioSync(points)))
             {
                 Status = DetectorSync.WaitSync;
-                MotorValues.MotorL = 0;
-                MotorValues.MotorR = 0;
-                return;
+                return value;
             }
 
-            Data.VariationLeft = (points.HL.Y - SkeletonSync.HL.Y) * 100;
-            Data.VariationRigth = (points.HR.Y - SkeletonSync.HR.Y) * 100;
+            Data.VariationLeft = (points.HL.Y - points.EL.Y) * 10000;
+            Data.VariationRigth = (points.HR.Y - points.ER.Y) * 10000;
 
             long vl = Convert.ToInt64(Data.VariationLeft);
             long vr = Convert.ToInt64(Data.VariationRigth);
+
             vl = vl > MaxVariation ? MaxVariation : vl < MinVariation ? MinVariation : vl;
             vr = vr > MaxVariation ? MaxVariation : vr < MinVariation ? MinVariation : vr;
+
             var l  = MapValues(vl, MinVariation, MaxVariation, -100, 100);
             var r = MapValues(vr, MinVariation, MaxVariation, -100, 100);
-            MotorValues.MotorL = l < 15 ? 0 : l;
-            MotorValues.MotorR = r < 15 ? 0 : r;
+
+            value.MotorL = l < DeadZone && l > DeadZoneInv ? 0 : l;
+            value.MotorR = r < DeadZone && r > DeadZoneInv ? 0 : r;
+
+            return value;
 
         }
 
-        private long  MapValues(long x, long in_min, long in_max, long out_min, long out_max)
+        private long MapValues(long x, long in_min, long in_max, long out_min, long out_max)
         {
             long divisor = (in_max - in_min);
             if (divisor == 0)
             {
-                return -1; //AVR returns -1, SAM returns 0
+                return -1; 
             }
             return (x - in_min) * (out_max - out_min) / divisor + out_min;
         }
 
-        private bool IsSync(List<bool> list)
+        private bool IsSync(List<float> list)
         {
-            foreach (bool action in list)
+            foreach (float diff in list)
             {
-                if (!action)
+                if (diff > PrecisionMesure || diff < PrecisionMesureInv)
                     return false;
             }
-
             return true;
         }
 
-        private List<bool> GetConditionWaitSync(PointsSkeleton points)
+        private List<float> GetDiffConditionWaitSync(PointsSkeleton points)
         {
-            List<bool> list = new List<bool>
+            List<float> list = new List<float>
             {
                 //left
-                Math.Abs(points.SL.Z - points.EL.Z) < PrecisionMesure,
-                Math.Abs(points.SL.X - points.EL.X) < PrecisionMesure,
-                Math.Abs(points.EL.Y - points.HL.Y) < PrecisionMesure,
+                points.SL.Z - points.EL.Z,
+                points.HL.X - points.EL.X,
+                points.HL.Y - points.EL.Y,
+                points.SL.X - points.EL.X,
+
                 //rigth
-                Math.Abs(points.SR.Z - points.ER.Z) < PrecisionMesure,
-                Math.Abs(points.SR.X - points.ER.X) < PrecisionMesure,
-                Math.Abs(points.ER.Y - points.HR.Y) < PrecisionMesure
+                points.SR.Z - points.ER.Z,
+                points.HR.X - points.ER.X,
+                points.HR.Y - points.ER.Y,
+                points.SR.X - points.ER.X,
             };
 
             return list;
         }
 
-        private List<bool> GetConditionSync(PointsSkeleton points)
+        private List<float> GetDiffConditioSync(PointsSkeleton points)
         {
-            List<bool> list = new List<bool>
+            List<float> list = new List<float>
             {
                 //left
-                Math.Abs(points.SL.Z - points.EL.Z) < PrecisionMesure,
-                Math.Abs(points.SL.X - points.EL.X) < PrecisionMesure,
+                points.SL.Z - points.EL.Z,
+                points.HL.X - points.EL.X,
+                points.SL.X - points.EL.X,
 
                 //rigth
-                Math.Abs(points.SR.Z - points.ER.Z) < PrecisionMesure,
-                Math.Abs(points.SR.X - points.ER.X) < PrecisionMesure
+                points.SR.Z - points.ER.Z,
+                points.HR.X - points.ER.X,
+                points.SR.X - points.ER.X,
             };
 
             return list;
         }
-
-        private List<Func<bool>> GetConditionIsSync(PointsSkeleton points)
-        {
-            List<Func<bool>> list = new List<Func<bool>>
-            {
-                //left
-                () => points.SL.X - PrecisionMesure < points.EL.X,
-                () => points.EL.X < points.SL.X + PrecisionMesure,
-                () => points.SL.X - PrecisionMesure < points.HL.Z,
-                () => points.HL.X < points.SL.X + PrecisionMesure,
-                //rigth
-                () => points.SR.X - PrecisionMesure < points.ER.X,
-                () => points.ER.X < points.SR.X + PrecisionMesure,
-                () => points.SR.X - PrecisionMesure < points.HR.Z,
-                () => points.HR.X < points.SR.X + PrecisionMesure
-            };
-
-            return list;
-        }
-
-        private List<CouplePoint> WaitSyncResult(PointsSkeleton points)
-        {
-
-            List<CouplePoint> list = new List<CouplePoint>
-            {
-                new CouplePoint(points.SL.X, points.EL.X),
-                new CouplePoint(points.SL.Z, points.EL.Z),
-                new CouplePoint(points.HL.Y, points.EL.Y),
-                new CouplePoint(points.HL.X, points.EL.X),
-                new CouplePoint(points.SR.X, points.ER.X),
-                new CouplePoint(points.SR.Z, points.ER.Z),
-                new CouplePoint(points.HR.Y, points.ER.Y),
-                new CouplePoint(points.HR.X, points.ER.X)
-            };
-
-            return list;
-        }
-
-        private bool CoordIsEquals(CouplePoint cp)
-        {
-            return cp.P1 - PrecisionMesure < cp.P2 && cp.P2 < cp.P1 + PrecisionMesure;
-        }
-
     }
 }
