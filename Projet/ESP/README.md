@@ -10,6 +10,8 @@ Projet ESP Robot Cam : SolutionESPCam
 
 ## Structure d'un projet PlatformIO
 
+Fichier de configuration : platformio.ini
+
 Main : /src/main.cpp
 
 Librairie personnel (private libraries): /lib/*
