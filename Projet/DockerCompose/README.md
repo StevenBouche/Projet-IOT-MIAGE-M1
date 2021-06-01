@@ -6,6 +6,8 @@ Compose est un outil permettant de définir et d'exécuter des applications Dock
 
 Compose fonctionne dans tous les environnements: production, préparation, développement, test, ainsi que les flux de travail CI. Vous pouvez en savoir plus sur chaque cas dans les cas d' utilisation courants.
 
+Pour plus de détails : https://docs.docker.com/compose/
+
 ## Contenu
 
 Nous avons plusieurs conteneurs :
