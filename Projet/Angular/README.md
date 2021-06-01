@@ -31,26 +31,26 @@ Installation du CLI angular
 ```bash
 npm install -g @angular/cli@11.2.12
 ```
-Installation des packages :
+Installation des packages
 ```bash
 npm install 
 ```
 
 ## Lancement :
 
-- Local sur la machine 
+Local sur la machine 
 ```bash 
 npm run local
 ```
-- Local sur la machine SSL
+Local sur la machine SSL
 ```bash
 npm run localSsl
 ``` 
-- Dans docker SSL 
+Docker SSL 
 ```bash
 npm run dockerSsl
 ```
-- Dans docker SSL pour la production
+Docker SSL pour la production
 ```bash
 npm run dockerSslProd
 ```
