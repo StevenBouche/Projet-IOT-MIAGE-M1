@@ -8,6 +8,12 @@ Projet ESP Robot : SolutionESP32
 
 Projet ESP Robot Cam : SolutionESPCam
 
+## Structure d'un projet PlatformIO
+
+Main : /src/main.cpp
+
+Librairie personnel (private libraries): /lib/*
+
 ## Présentation de Platform IO : https://docs.platformio.org/en/latest/what-is-platformio.html
 
 La philosophie unique de PlatformIO sur le marché de l'embarqué offre aux développeurs un environnement de développement intégré moderne ( Cloud & Desktop IDE ) qui fonctionne sur plusieurs plates-formes, prend en charge de nombreux kits de développement logiciel (SDK) ou Frameworks différents , et comprend un débogage sophistiqué ( débogage ), des tests unitaires ( Test unitaire ), analyse de code automatisée (analyse de code statique ) et gestion à distance ( développement à distance ). Il est conçu pour maximiser la flexibilité et le choix des développeurs, qui peuvent utiliser des éditeurs graphiques ou en ligne de commande ( PlatformIO Core (CLI) ), ou les deux.
