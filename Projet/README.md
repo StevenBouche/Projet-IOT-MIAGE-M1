@@ -7,6 +7,7 @@ Le projet contient :
 - Script : Contient tous les scripts d'installation, ou d'éxecution. 
 - ESP : Tous les projets concernant les applications des ESP.
 - PythonProject : Tous les fichiers et le script pour la reconnaissance faciale.
+- Mobiule_App : Application mobile de localisation GPS pour l'ESP.
 - DockerCompose : Contient tous les docker compose pour l'éxecution des applications, database. 
 - Certificates : Contient tous les certificats pour les différentes applications. 
 
