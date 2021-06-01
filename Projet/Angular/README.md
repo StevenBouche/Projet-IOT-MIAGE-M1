@@ -36,7 +36,7 @@ Installation des packages
 npm install 
 ```
 
-## Lancement :
+## Lancement
 
 Local sur la machine 
 ```bash 
