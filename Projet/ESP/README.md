@@ -5,6 +5,7 @@ Le robot est composé de deux ESP. Un qui gère les moteurs ainsi que l'envoi et
 Pour les deux projets nous utilisons l'IDE Platform IO disponible comme extention de visual studio code. 
 
 Projet ESP Robot : SolutionESP32
+
 Projet ESP Robot Cam : SolutionESPCam
 
 ## Présentation de Platform IO : https://docs.platformio.org/en/latest/what-is-platformio.html
