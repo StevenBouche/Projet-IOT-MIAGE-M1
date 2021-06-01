@@ -13,9 +13,22 @@ Le projet contient :
 
 A noter que chaque partie du projet contient son propre readme.md ! 
 
-# Déploiment 
+# Déploiement 
 
 Le déploiement des conteneurs se fait sur une machine virtuelle Linux dans le Cloud ; se référer au dossier Script pour l'installation de l'environnement Linux. 
 
 Nous utilisons les conteneurs Docker pour héberger nos applications, et DockerCompose pour la définition et l'éxecution de nos applications multi-conteneurs ; se référer au dossier DockerCompose pour la définition des applications et l'éxecution. 
 
+## Pour le dévelopement local
+
+Linux : se référer aux scripts d'installation et le dossier DockerCompose
+
+Windows : logiciel Docker Desktop
+
+Nécessite :
+
+- NPM / Node
+- Visual Studio 2019
+- Angular CLI
+- Python 
+- PlatformIO
