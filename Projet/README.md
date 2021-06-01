@@ -13,3 +13,9 @@ Le projet contient :
 
 A noter que chaque partie du projet contient son propre readme.md ! 
 
+# Déploiment 
+
+Le déploiment des conteneurs se fais sur une machine virtuel Linux dans le Cloud, se référer au dossier Script pour l'installation de l'environnement Linux. 
+
+Nous utilisons les conteneurs Docker pour héberger nos applications, et Docker compose pour la définition et l'éxecution de nos applications multi-contenuers. Se référer au dossier DockerCompose pour la définition des applications et l'éxecution. 
+
