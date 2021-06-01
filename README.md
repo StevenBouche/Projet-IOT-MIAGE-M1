@@ -15,6 +15,12 @@ Création d'un robot piloter par ESP32, composé de différents capteurs lui per
 
 Le projet est dans le dossier Projet.
 
+## Liens du projet déployer
+
+- Hostname / IP du serveur : vps-b75ef108.vps.ovh.net / 51.38.226.68
+- Interface web : https://vps-b75ef108.vps.ovh.net/dashboard ou https://51.38.226.68/dashboard
+- Interface documentation API : https://vps-b75ef108.vps.ovh.net:8001/swagger ou https://51.38.226.68:8001/swagger
+
 ## Matériels disponibles
 
 - ESP32
