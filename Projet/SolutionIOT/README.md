@@ -4,6 +4,7 @@ Solution IOT contient :
 
 - Serveur d'application ASPNET : Projects/APIRobot
 - L'application de contrôle du robot : Projects/ControlerWPF
+- Application permettant d'initialiser des données dans MongoDB : Projects/MongoSeeding (surtout pour l'authentification et les authorisations)
 
 # IDE 
 
