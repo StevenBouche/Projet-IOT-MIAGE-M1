@@ -13,7 +13,7 @@
 
 Création d'un robot piloter par ESP32, composé de différents capteurs lui permettant de se déplacer de façon autonome ou contrôlée et de renvoyer certaines données de son environnement. 
 
-Le projet est dans le dossier Project.
+Le projet est dans le dossier Projet.
 
 ## Matériels disponibles
 
