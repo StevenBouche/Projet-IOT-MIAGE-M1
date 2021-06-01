@@ -2,7 +2,7 @@
 
 ## Certificat
 
-Le fichier certificate.sh contient les scripts pour la génération des certificats CA, et des certificats pour les serveurs. 
+Le fichier certificate.sh contient les scripts pour l'installation de Openssl et pour la génération des certificats CA, et des certificats pour les serveurs. 
 
 ## Installation environnement de déploiement sur machine Linux
 
