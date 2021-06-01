@@ -15,7 +15,7 @@ Nous avons plusieurs conteneurs :
 - Un conteneur hébergeant le front web Angular
 - Un conteneur hébergeant le serveur applicatif .NET
 
-De base nous utilisons deux définition docker-compose :
+De base, nous utilisons deux définitions docker-compose :
 
 - docker-compose.yml
 - docker-compose.override.yml
