@@ -23,3 +23,12 @@ mdb-card{
     background-color: #673ab7;
     color: white;
 }
+
+.titleDashboard{
+    text-align: center;
+    color: #673ab7
+}
+
+.emptyEquipment{
+    text-align: center;
+}
