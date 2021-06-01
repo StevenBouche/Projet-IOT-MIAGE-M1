@@ -55,16 +55,16 @@ Le projet est dans le dossier Projet.
 
 ### Relevé des données de l'environnement
 
-- Luminosité 
-- Température
-- Son ambiant si utilisation du téléphone
-- Coordonnées GPS si utilisation du téléphone
+- :heavy_check_mark: Luminosité 
+- :heavy_check_mark: Température
+- :x: Son ambiant si utilisation du téléphone
+- :heavy_check_mark: Coordonnées GPS si utilisation du téléphone
 
 ### Visualisation temps réel de l'environnement
 
-- Stream vidéo de la caméra
-- Prise de photos
-- Si possible à la fin enregistrement des flux vidéo ou photo
+- :heavy_check_mark: Stream vidéo de la caméra
+- :x: Prise de photos
+- :x: Si possible à la fin enregistrement des flux vidéo ou photo
 
 ## Fonctionnalités applicatives 
 
@@ -77,34 +77,40 @@ Le projet est dans le dossier Projet.
 
 ### Application client Web UI
 
-- Switch entres les différents modes de déplacements du robot
-- Visualisation des données de l'environnement
-- Déclenchement de la prise d'une photo ou flux vidéo
-- Visualisation du stream vidéo
+- :x: Switch entres les différents modes de déplacements du robot
+- :heavy_check_mark: Visualisation des données de l'environnement
+- :x: Déclenchement de la prise d'une photo ou flux vidéo
+- :heavy_check_mark: Visualisation du stream vidéo
+- :heavy_check_mark: Visualisation de la puissance motor
+- :heavy_check_mark: Visualisation de la localisation du robot
 
 ### Application client lourd pour contrôle du robot 
 
-- Switch entres les différents modes de déplacements du robot
-- Contrôle du robot via Kinect
-- Contrôle du robot via manette
+- :heavy_check_mark: Switch entres les différents modes de déplacements du robot
+- :heavy_check_mark: Contrôle du robot via Kinect
+- :heavy_check_mark: Contrôle du robot via manette
 
 ### Application API
 
-- Sauvegarde des données envoyé par le robot
-- Obtenir les données pour l'affichage 
+- :heavy_check_mark: Sauvegarde des données envoyé par le robot
+- :heavy_check_mark: Obtenir les données pour l'affichage 
+- :heavy_check_mark: Réception du flux d'image 
+- :heavy_check_mark: Broker MQTT
+- :heavy_check_mark: Websocket temp réel 
 
 ### Application mobile
 
-- Envoyer les données GPS
-- Envoyer les données des haut-parleurs
+- :heavy_check_mark: Envoyer les données GPS
+- :x: Envoyer les données des haut-parleurs
 - Disponible Android et IOS
 
 ## Sécurité
 
-- Login sur l'application Web
-- OAuth avec JWT Token sur l'API
-- MQTT avec TLS et authentification
-- HTTPS
+- :x: Login sur l'application Web
+- :heavy_check_mark: OAuth avec JWT Token sur l'API
+- :heavy_check_mark: MQTT avec TLS et authentification
+- :heavy_check_mark: HTTPS
+- :heavy_check_mark: Gestion de droits MQTT et TCP avec authentification JWT préalable
 
 ## Attribution des rôles
 
