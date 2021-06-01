@@ -13,6 +13,8 @@
 
 Création d'un robot piloter par ESP32, composé de différents capteurs lui permettant de se déplacer de façon autonome ou contrôlée et de renvoyer certaines données de son environnement. 
 
+Le projet est dans le dossier Project.
+
 ## Matériels disponibles
 
 - ESP32
@@ -149,7 +151,7 @@ Prévisionnel actuellement sur 3 itérations.
 - :heavy_check_mark: Mise en place du broker MQTT
 - :heavy_check_mark: Mise en place de l'App de contrôle
 - :heavy_check_mark: Mise en place projet ESP32
-- :arrows_counterclockwise: Mise en place de l'app Mobile
+- :heavy_check_mark: Mise en place de l'app Mobile
 
 ### Itération 3
 
@@ -158,7 +160,7 @@ Prévisionnel actuellement sur 3 itérations.
 - :heavy_check_mark: Mise en place du dashboard sur la Web app UI
 - :heavy_check_mark: Mise en place de la Kinect sur le client lourd 
 - :heavy_check_mark: Mise en place des topic sur le borker MQTT
-- :x: Connexion de l'ESP32 avec le téléphone par bluetooh via l'application mobile
+- :heavy_check_mark: Connexion de l'ESP32 avec le téléphone par bluetooh via l'application mobile
 
 ## Début de la conception du système : 
 
