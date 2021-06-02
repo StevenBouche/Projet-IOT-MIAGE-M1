@@ -125,14 +125,41 @@ Le projet est dans le dossier Projet.
 	- User story
 	- Itérations
 
-- Assemblage et interconnexion robot et ESP32 : **Belkarfa Lina** et **Griseri Pierre**
+- Assemblage et interconnexion robot et ESP32 : 
+	- **Belkarfa Lina** 
+	- **Griseri Pierre** 
+	- **Prevot Armand** 
+	- **Parent Margaux** 
+	- **Bouche Steven**
+	- **Garnier Corentin**
 
 - Architecture / Conception et code :
-	- User Interface : **Prevot Armand** et **Parent Margaux**
-	- API backend / MQTT : **Bouche Steven**
-	- Robot : **Belkarfa Lina** 
-	- Client lourd de contrôle : **Garnier Corentin**
+	- User Interface : **Prevot Armand**
+	
+	- Serveur applicatif : 
+		- Gestion des données du robot : **Parent Margaux**
+		- Gestion de l'authentification / authorisation : **Prevot Armand** / **Bouche Steven**
+		- Service TCP d'images : **Bouche Steven**
+		- Service MQTT : **Prevot Armand**
+		- Données temps réel : **Belkarfa Lina**
+		- Gestion des connections : **Bouche Steven**
+		
+	- Robot : 
+		- Esp camera : **Belkarfa Lina** 
+		- Esp du robot :
+			- Gestion des moteurs : **Prevot Armand**
+			- Gestion des capteurs : **Parent Margaux**
+			- MQTT : **Garnier Corentin**
+			- Wifi : **Bouche Steven**
+			- Bluetooth : **Griseri Pierre**
+			
+	- Client lourd de contrôle : 
+		- Manette : **Garnier Corentin**
+		- Kinect : **Bouche Steven**
+		
 	- Mobile App : **Griseri Pierre**
+	
+	- OpenCV : **Belkarfa Lina**
 
 - Qualité : **Garnier Corentin**
 	 - Commentaire
