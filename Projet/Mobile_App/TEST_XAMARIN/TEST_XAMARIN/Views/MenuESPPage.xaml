@@ -4,11 +4,11 @@
              x:Class="TEST_XAMARIN.Views.MenuESPPage"
              xmlns:vm="clr-namespace:TEST_XAMARIN.ViewModels"
              Title="{Binding Title}">
-    
+
     <ContentPage.BindingContext>
         <vm:MenuESPModel />
     </ContentPage.BindingContext>
-    
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <Color x:Key="Accent">#673ab7</Color>
@@ -44,7 +44,7 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <Button x:Name="sndLoc" Text="Send Location" IsEnabled="False" Clicked="btnSendLocation_Clicked" />
+                <Button x:Name="sndLoc" Text="Start Location Service" Clicked="btnSendLocation_Clicked" />
             </StackLayout>
         </ScrollView>
     </Grid>
