@@ -127,6 +127,7 @@ namespace TEST_XAMARIN.Views
             while (isSharing)
             {
                 await Task.Delay(5000);
+                pos = await CrossGeolocator.Current.GetPositionAsync();
                 Coord c = new Coord(pos.Latitude, pos.Longitude);
                 string msg = JsonConvert.SerializeObject(c);
                 data = Encoding.UTF8.GetBytes(msg);
