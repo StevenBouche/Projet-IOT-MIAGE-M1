@@ -119,10 +119,12 @@ namespace TEST_XAMARIN.Views
             if (isSharing == false)
             {
                 isSharing = true;
+                sndLoc.Text = "Stop Location Service";
             }
             else
             {
                 isSharing = false;
+                sndLoc.Text = "Start Location Service";
             }
             while (isSharing)
             {
