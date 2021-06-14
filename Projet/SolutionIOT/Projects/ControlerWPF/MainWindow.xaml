@@ -1,0 +1,35 @@
+﻿<Window x:Class="ControlerWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ControlerWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        xmlns:uc="clr-namespace:ControlerWPF.Controls">
+
+    <Grid>
+        <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}">
+            <TabItem Header="{materialDesign:PackIcon Kind=MicrosoftXboxController, Size=24}" Style="{StaticResource MaterialDesignNavigationRailTabItem}">
+                <uc:ControlerPage x:Name="ControlerPage"></uc:ControlerPage>
+            </TabItem>
+            <TabItem Header="{materialDesign:PackIcon Kind=Camera, Size=24}" Style="{StaticResource MaterialDesignNavigationRailTabItem}">
+                <uc:KinectPage x:Name="KinectPage"></uc:KinectPage>
+            </TabItem>
+        </TabControl>
+
+        <Canvas Margin="16,0,0,31" Width="40" Height="40" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <Ellipse Fill="{Binding ConnectedColor}" Width="40" Height="40" />
+        </Canvas>
+
+    </Grid>
+</Window>
+

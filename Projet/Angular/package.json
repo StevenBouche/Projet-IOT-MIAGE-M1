@@ -7,7 +7,7 @@
     "local": "ng serve --host 0.0.0.0 --port 80",
     "localSsl": "ng serve --host 0.0.0.0 --port 443 --ssl --ssl-key ../Certificates/self/privateKey.key --ssl-cert ../Certificates/self/certificat.crt",
     "dockerSsl": "ng serve --host 0.0.0.0 --port 443 --ssl --ssl-key /https/privateKey.key --ssl-cert /https/certificat.crt",
-    "dockerSslProd": "ng serve --host 0.0.0.0 --port 443 --ssl --ssl-key /https/privateKey.key --ssl-cert /https/certificat.crt --configuration=production",
+    "dockerSslProd": "ng serve --host 0.0.0.0 --port 443 --ssl --ssl-key /https/privateKey.key --ssl-cert /https/certificat.crt --configuration=production --public-host vps-b75ef108.vps.ovh.net",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

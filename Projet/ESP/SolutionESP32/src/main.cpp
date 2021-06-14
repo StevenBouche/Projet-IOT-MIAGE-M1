@@ -12,7 +12,9 @@
 #include "Handler/MotorHandler.h"
 #include "Handler/SensorHandler.h"
 
-//region PIN
+#include "MQTTAsync/MQTTAsyncClient.h"
+
+#pragma region PinDefinition
 #define PIN_MOTOR_L_1_1 12 //D12 OUTPUT
 #define PIN_MOTOR_L_1_2 14 //D14 OUTPUT
 #define PIN_MOTOR_L_PWM_1 13 //D13 OUTPUT
@@ -28,11 +30,9 @@
 #define ULTRASONIC_PING 23
 #define ULTRASONIC_PONG 22
 #define BLINK_LED_GREEN (gpio_num_t) 19
-//endregion PIN
+#pragma endregion PinDefinition
 
-
-//region Const
-//  Json
+#pragma region JsonFieldDefinition
 const char* MotorLJson = "MotorL";
 const char* MotorRJson = "MotorR";
 const char* LatitudeJson = "Latitude";
@@ -43,24 +43,19 @@ const char* LigthJson= "Ligth";
 const char* TemperatureJson = "Temperature";
 const char* AccessTokenJson = "accessToken";
 const char* ExpirationTokenJson = "expireAt";
-const String idEquipment = "Esp32Robot";
-//  Mqtt
-const uint16_t PortMqtt = 1883;
-const char* HostMqtt = "62.35.150.64";
-const char* DataTopicName = "IOT/Data";
-const String ControlerTopicNameSub = "IOT/Controler/" + idEquipment;
+#pragma endregion JsonFieldDefinition
 
-//  Authentification
-const String AuthJson = "{ \"IdEquipment\": \"" + idEquipment +"\", \"Password\": \"25Zjqgr8AQxxZsyz\", \"TypeEquipment\": \"Robot\", \"Role\": \"Station\" }";
-const String AuthUrl = "http://62.35.150.64:8000/api/AuthEquipment/auth";
-String token = "";
-long tokenExpiration = 0;
-// Other
+#pragma region IdDefinition
+const String idEquipment = "Esp32Robot";
+#pragma endregion IdDefinition
+
+#pragma region OtherDefinition
 const int LoopDelay = 5000;
 uint32_t stateBlink = 0;
 int delayTaskBlink = 1000;
-//endregion Const
+#pragma endregion OtherDefinition
 
+#pragma region QueueMqtt
 typedef struct DataMQTT {
   char * topic;
   byte * message; 
@@ -68,25 +63,50 @@ typedef struct DataMQTT {
 } DataMQTT_t;
 
 QueueHandle_t queue;
+#pragma endregion QueueMqtt
 
-//region variable_connection
-//  WiFi
+#pragma region WifiVariables
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
 IdentifiantWifi ids[] = {
   IdentifiantWifi("Bbox-4DD70ADE", "551F54E2D72A27CA1EA44567F149E1"),
   IdentifiantWifi("iPhone de Steven", "iobwgn7obkf91")
 };
 WifiESP wifi;
+#pragma endregion WifiVariables
 
-//  Ntp
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP); //time ntp
-//  Http
+#pragma region MqttVariables
+
+const char* HostMqtt = "62.35.150.64";
+const char* DataTopicName = "IOT/Data";
+const String ControlerTopicNameSub = "IOT/Controler/" + idEquipment;
+
+#if ASYNC_TCP_SSL_ENABLED
+bool mqttSecure = true;
+const uint16_t PortMqtt = 8884;
+#else
+bool mqttSecure = false;
+const uint16_t PortMqtt = 1883;
+#endif
+
+LinkedList<MQTTAction> actions;
+MQTTConfig mqttConfig(HostMqtt, PortMqtt, "", "", "", mqttSecure);
+MQTTAsyncClient mqttAsyncClient(&mqttConfig);
+#pragma endregion MqttVariables
+
+#pragma region AuthVariables
 HTTPClient http; 
-//  Bluetooth
-BTServer btServer;
-//endregion variable_connection
+const String AuthJson = "{ \"IdEquipment\": \"" + idEquipment +"\", \"Password\": \"25Zjqgr8AQxxZsyz\", \"TypeEquipment\": \"Robot\", \"Role\": \"Station\" }";
+const String AuthUrl = "http://62.35.150.64:8000/api/AuthEquipment/auth";
+String token = "";
+long tokenExpiration = 0;
+#pragma endregion AuthVariables
 
-//region variable_state_handler
+#pragma region BluetoothVariables
+BTServer btServer;
+#pragma endregion BluetoothVariables
+
+#pragma region StateVariables
 StateApp state;
 MotorHandler motor(
   PIN_MOTOR_L_1_1, 
@@ -102,8 +122,9 @@ MotorHandler motor(
   OBSTACLE_R, 
   ULTRASONIC_PING, 
   ULTRASONIC_PONG);
-  //endregion variable_state_handler
+#pragma endregion StateVariables
 
+#pragma region Auth
 void printAuth(unsigned long currentTime){
   String s = "Token authentification : ";
   s += String(token) + "\n";
@@ -168,7 +189,7 @@ void tryRefreshAuthorizationForMqtt(){
   s += String(currentTime) + "\n";
   s += "\tExpiration : " + String(tokenExpiration) + "\n";
   Serial.println(s);
-
+  
   if(currentTime<tokenExpiration)
     return;
   
@@ -180,10 +201,75 @@ void tryRefreshAuthorizationForMqtt(){
   mqttConfig.printConfig();
 
 }
-//endregion auth
+#pragma endregion Auth
 
-//region WiFi
+#pragma region Mqtt
+/**
+ * Callback when received data from MQTT broker from topic controler.
+ * 
+ * @param message message received
+ * @param length size of message
+ */
+void receivedActionControler(const byte* message, unsigned int length){
 
+  StaticJsonDocument<256> doc;
+  DeserializationError error = deserializeJson(doc, message, length);
+
+  if(error != DeserializationError::Ok){
+    Serial.println("Error deserialisation"); Serial.println(error.c_str());
+    return;
+  }
+  else if(doc.containsKey(MotorLJson) && doc.containsKey(MotorRJson)){
+    state.motorsState->setMotorL(doc[MotorLJson]);
+    state.motorsState->setMotorR(doc[MotorRJson]);
+    //state.motorsState->print();
+    motor.rotateMotor(MOTOR_L, state.motorsState->getMotorL());
+    motor.rotateMotor(MOTOR_R, state.motorsState->getMotorR());
+  } else {
+    Serial.println("Error json parser");
+  }
+}
+
+void mqtt_pubcallback_async(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total){
+  size_t lenTopic = strlen(topic)+1;
+  DataMQTT_t * data = reinterpret_cast<DataMQTT_t*>(pvPortMalloc(sizeof(DataMQTT_t)));
+  data->length = len;
+  data->topic = (char*)pvPortMalloc(lenTopic*sizeof(char));
+  data->message = (byte*)pvPortMalloc(len*sizeof(byte));
+  memcpy(data->message,payload,len);
+  strcpy(data->topic,topic);
+  xQueueSend(queue, (void*) &data, portMAX_DELAY);
+}
+
+void onConnectMqtt(){
+
+}
+
+void onDisconnectMqtt(){
+  motor.breakMotors();
+  tryRefreshAuthorizationForMqtt();
+}
+
+/**
+ * Init MQTT Client. 
+ * Create actions for subscribe topics and execute a callback associate with topic.
+ */
+void initMQTT(){
+
+  Serial.println("Init MQTT connection.");
+
+  MQTTAction actionToto = MQTTAction(ControlerTopicNameSub, receivedActionControler);
+  actions.add(actionToto);
+  mqttAsyncClient.setConnectCallback(onConnectMqtt);
+  mqttAsyncClient.setDisconnectCallback(onDisconnectMqtt);
+  mqttAsyncClient.setMessageCallback(mqtt_pubcallback_async);
+  mqttAsyncClient.addTopic(ControlerTopicNameSub.c_str());
+
+  Serial.println("End init MQTT connection.");
+}
+#pragma endregion Mqtt
+
+#pragma region WifiConnection
 /**
  * Callback WiFi connected. Execute task MQTT Client when connected.
  */
@@ -223,9 +309,9 @@ void initWiFi(){
   Serial.println("End init WiFi connection.");
 
 }
-//endregion WiFi
+#pragma endregion WifiConnection
 
-//region BLE
+#pragma region Bluetooth
 
 /**
  * Callback when received data from Bluetooth client.
@@ -254,9 +340,9 @@ void initBLE(){
   btServer.setup(receivedActionBluetooth);
   Serial.println("End init Bluetooth server.");
 }
-//endregion BLE
+#pragma endregion Bluetooth
 
-//region SendData
+#pragma region SendingData
 void sendDataIOT(){
 
   //actualize data before send MQTT broker
@@ -278,8 +364,9 @@ void sendDataIOT(){
   //send data to broker
   mqttAsyncClient.sendData(DataTopicName, output);
 }
-//end region SendData
+#pragma endregion SendingData
 
+#pragma region MainTasks
 void taskActionConnection(void * args){
 
   while(true){
@@ -298,12 +385,33 @@ void taskActionConnection(void * args){
     }
       
     gpio_set_level(BLINK_LED_GREEN,  stateBlink);
+
     vTaskDelay(delayTaskBlink);
   }
 
   vTaskDelete(NULL);
 }
 
+void taskHandlePubCallback(void * args){
+  DataMQTT_t *data;
+  while(true){
+    BaseType_t t = xQueueReceive(queue, &data, portMAX_DELAY);
+    if(t == pdPASS)
+    {
+     for(int i = 0; i < actions.size(); i++){
+        if(actions.get(i).getTopic() == data->topic){
+          actions.get(i).getHandler()((const byte*) data->message,data->length);
+          break;
+        }
+      }
+    }
+    vPortFree(data); 
+  }
+  vTaskDelete(NULL);
+}
+#pragma endregion MainTasks
+
+#pragma region Main
 void setup() {
 
   initArduino();
@@ -339,3 +447,4 @@ void loop() {
   sendDataIOT();
   delay(LoopDelay);
 }
+#pragma endregion Main

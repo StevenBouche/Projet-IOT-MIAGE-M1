@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TEST_XAMARIN.Views.AboutPage"
+             Title="{Binding Title}">
+
+    <StackLayout Spacing="20" Padding="15">
+        <Label Text="Application Xamarin cross platform pour l'ESP 32 :" FontSize="Medium" />
+        <Label Text="Description:" FontSize="Medium" />
+        <Label Text="Application Xamarin permettant de : récupérer la localisation utilisateur, sérialiser la localisation en JSON, détecter si le bluetooth est activé, scanner les appareils à proximité, se connecter avec un appareil, envoyer des données à l'appareil" FontSize="Small"/>
+    </StackLayout>
+    
+</ContentPage>

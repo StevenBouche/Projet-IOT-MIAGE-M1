@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TEST_XAMARIN.Views.MenuESPPage"
+             xmlns:vm="clr-namespace:TEST_XAMARIN.ViewModels"
+             Title="{Binding Title}">
+
+    <ContentPage.BindingContext>
+        <vm:MenuESPModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Accent">#673ab7</Color>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackLayout BackgroundColor="{StaticResource Accent}" VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+                <ContentView Padding="0,40,0,40" VerticalOptions="FillAndExpand">
+                    <Image Source="xamarin_logo.png" VerticalOptions="Center" HeightRequest="64" />
+                </ContentView>
+            </StackLayout>
+        </StackLayout>
+        <ScrollView Grid.Row="1">
+            <StackLayout Orientation="Vertical" Padding="30,24,30,24" Spacing="10">
+                <Label Text="Application mobile pour l'ESP 32" FontSize="Title"/>
+                <Label Text="JOY-iT Robot Car Kit 01
+                       " FontSize="16" Padding="0,24,0,0"/>
+
+                <Button Text="Location" Clicked="btnLocation_Clicked" BackgroundColor="{StaticResource Accent}" />
+                <Button Text="Status" Clicked="btnStatus_Clicked"  BackgroundColor="{StaticResource Accent}"/>
+                <Button Text="Scan" Clicked="btnScan_Clicked" BackgroundColor="{StaticResource Accent}"/>
+                <Button Text="Connect" Clicked="btnConnect_Clicked" BackgroundColor="{StaticResource Accent}"/>
+                <ListView x:Name="list" ItemSelected="list_ItemSelected" BackgroundColor="{StaticResource Accent}" SeparatorColor="White" ItemsSource="{Binding deviceList}" VerticalScrollBarVisibility="Always" VerticalOptions="StartAndExpand" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextCell Text="{Binding Name}" TextColor="White"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Button x:Name="sndLoc" Text="Start Location Service" Clicked="btnSendLocation_Clicked" />
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>
